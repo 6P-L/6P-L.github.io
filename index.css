@@ -82,3 +82,7 @@ h3.font-name{
     font-size: 14px;
     font-family:"Poppins";
 }
+
+.text-styles li{
+    font-size: 18px;
+}
