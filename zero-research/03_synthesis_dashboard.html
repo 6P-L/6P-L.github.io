@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero Research Dashboard</title>
+<meta name="description" content="Synthetic primary market research dashboard for Zero: assumption scorecard, WTP, objections and verbatims.">
+<style>
+:root{
+  --page:#f3eee4; --surface:#fbf8f2; --surface-2:#f1ebdf; --ink:#1c1a17; --ink-2:#55504a; --muted:#8a847b;
+  --line:#e2dbcc; --accent:#b8482a; --accent-soft:#f3dfd5; --code:#efe8da;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --warn-ink:#8a5a00; --crit:#d03b3b; --crit-ink:#a42626;
+  --bar:#2a78d6; --bar-2:#86b6ef; --ring:rgba(28,26,23,.10);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+    --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+    --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+  --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+  --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 16px 96px}
+header.hero{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:28px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.brand{font:600 15px/1 Georgia,"Songti SC",serif;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+h1{font:600 clamp(28px,4.4vw,44px)/1.15 Georgia,"Songti SC",serif;margin:.35em 0 .3em;letter-spacing:-.01em}
+h2{font:600 clamp(22px,3vw,28px)/1.25 Georgia,"Songti SC",serif;margin:2.2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:18px;line-height:1.35;margin:1.8em 0 .5em}
+h4{font-size:16px;margin:1.4em 0 .4em;color:var(--ink-2)}
+p,li{color:var(--ink)}
+.lede{color:var(--ink-2);font-size:17px;max-width:760px}
+a{color:var(--accent)}
+strong{font-weight:650}
+code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+ul,ol{padding-left:1.3em}
+li{margin:.25em 0}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:24px 0;font-size:14px}
+nav.toc b{display:block;font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+nav.toc a{color:var(--ink-2);text-decoration:none;display:inline-block;margin:2px 14px 2px 0}
+nav.toc a:hover{color:var(--accent)}
+.tbl{overflow-x:auto;margin:14px 0 18px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--ink-2);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.warnbox{background:var(--accent-soft);border:1px solid var(--accent);border-left-width:5px;border-radius:10px;padding:14px 18px;margin:18px 0}
+.warnbox h2,.warnbox h3{margin-top:0;border:0;padding:0}
+.callout{border-radius:10px;padding:12px 16px;margin:10px 0;border:1px solid var(--line);background:var(--surface)}
+.callout .lbl{display:block;font:600 11px/1.4 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.callout p{margin:.25em 0}
+.callout.syn{border-left:4px solid var(--bar)} .callout.syn .lbl{color:var(--bar)}
+.callout.val{border-left:4px solid var(--accent)} .callout.val .lbl{color:var(--accent)}
+.callout.probe{border-left:4px solid var(--muted)} .callout.probe .lbl{color:var(--muted)}
+.callout.rec{border-left:4px solid var(--good)} .callout.rec .lbl{color:var(--good-ink)}
+.callout.why{border-left:4px solid var(--warn)} .callout.why .lbl{color:var(--warn-ink)}
+.callout.test{border-left:4px solid var(--accent)} .callout.test .lbl{color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 system-ui,sans-serif;padding:4px 8px;border-radius:999px;white-space:nowrap;max-width:100%;border:1px solid transparent}
+.badge.v{color:var(--good-ink);background:color-mix(in srgb,var(--good) 14%,transparent);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.badge.p{color:var(--warn-ink);background:color-mix(in srgb,var(--warn) 18%,transparent);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.badge.i{color:var(--crit-ink);background:color-mix(in srgb,var(--crit) 13%,transparent);border-color:color-mix(in srgb,var(--crit) 40%,transparent)}
+.badge.n{color:var(--ink-2);background:var(--surface-2);border-color:var(--line)}
+.matrix td,.matrix th{text-align:center}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.kpi .kv{font:600 30px/1.1 Georgia,serif;margin:6px 0 2px}
+.kpi .s{font-size:13px;color:var(--ink-2)}
+.kpi .s .badge{white-space:normal}
+.kpi{min-width:0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 12px;margin:16px 0 22px}
+.chart h4{margin:0 0 4px;color:var(--ink)}
+.chart .sub{font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-2);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.row{display:grid;grid-template-columns:minmax(120px,260px) 1fr 104px;gap:12px;align-items:center;margin:8px 0;font-size:14px}
+.row .lab{color:var(--ink);line-height:1.3}
+.row .lab small{display:block;color:var(--muted);font-size:12px}
+.row .val{font-variant-numeric:tabular-nums;color:var(--ink-2);text-align:right;white-space:nowrap}
+.track{height:18px;background:var(--surface-2);border-radius:4px;display:flex;gap:2px;overflow:hidden}
+.seg{height:100%;border-radius:4px;min-width:0;cursor:default;transition:filter .12s}
+.seg:hover{filter:brightness(1.1)}
+.seg.v{background:var(--good)} .seg.p{background:var(--warn)} .seg.i{background:var(--crit)}
+.seg.b{background:var(--bar)} .seg.b2{background:var(--bar-2)}
+.vbars{display:flex;align-items:flex-end;gap:10px;height:190px;padding:0 4px;border-bottom:1px solid var(--line)}
+.vcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.vcol .bar{width:100%;max-width:64px;background:var(--bar);border-radius:4px 4px 0 0}
+.vcol .n{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.vlabels{display:flex;gap:10px;padding:6px 4px 0}
+.vlabels div{flex:1;text-align:center;font-size:12px;color:var(--muted);line-height:1.3}
+.refline{position:relative}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.twocol{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row .val{text-align:left}}
+details.raw{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.raw summary{cursor:pointer;padding:10px 14px;font-weight:600}
+details.raw pre{margin:0;padding:14px;overflow:auto;max-height:420px;font:12px/1.5 ui-monospace,monospace;background:var(--code);border-radius:0 0 10px 10px}
+.need{font:500 clamp(19px,2.4vw,24px)/1.4 Georgia,"Songti SC",serif;border-left:4px solid var(--accent);padding:6px 0 6px 16px;margin:14px 0}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--ink);color:var(--page);font-size:12px;line-height:1.4;padding:6px 9px;border-radius:6px;max-width:280px;opacity:0;transition:opacity .08s}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.theme-toggle{position:absolute;top:12px;right:16px;background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;z-index:5}
+@media print{.theme-toggle,nav.toc{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" type="button" aria-label="Toggle light or dark theme">◐ Theme</button>
+<div class="wrap">
+<header class="hero">
+<div class="brand"><i></i>Zero · Synthetic Research</div>
+<div class="eyebrow">Steps 4–5 · Synthesis dashboard</div>
+<h1>Zero Synthetic User Research: Synthesis Dashboard</h1><p class="lede">Ten synthetic end users, eight key assumptions (Disciplined Entrepreneurship Step 20), one synthesis. Scorecard, willingness to pay, objections, verbatims and the biggest unmet need.</p>
+</header>
+<nav class="toc"><b>Contents</b><a href="#disclaimer-synthetic-personas-not-real-customers">Disclaimer: synthetic personas, not real customers</a><a href="#source-and-method">Source and method</a><a href="#1-executive-summary">Executive summary</a><a href="#2-quantitative-findings">Quantitative findings</a><a href="#3-qualitative-findings">Qualitative findings</a><a href="#4-segment-implications">Segment implications</a><a href="#5-open-questions-that-only-real-human-interviews-can-answer">Open questions that only real human interviews can answer</a><a href="#appendix-machine-readable-data">Appendix: machine-readable data</a></nav>
+<p>Study: synthetic primary market research on Zero, an AI-native active learning system (scaffolded tutoring, persistent cross-session memory, private document grounding, proactive push) for college finals and professional exams.</p>
+<p>Baseline business context used in this dashboard: pricing tiers ¥0 trial / ¥39 base / ¥99 Pro / ¥199 heavy; current ARPU ¥78.9; current paid conversion 4.6%.</p>
+<div class="warnbox"><h2 id="disclaimer-synthetic-personas-not-real-customers">Disclaimer: synthetic personas, not real customers</h2>
+<p>IMPORTANT. Every finding in this dashboard comes from 10 AI-generated synthetic personas answering an AI-simulated interview. This is an exploratory simulation. Its only legitimate uses are to refine hypotheses, sharpen the interview script and decide what to ask real people.</p>
+<ul>
+<li>All findings MUST be validated through primary interviews with real human end users before they inform product, pricing or go-to-market decisions.
+</li>
+<li>Synthetic personas cannot reliably predict real purchasing behavior, real risk tolerance or real-world study habits.
+</li>
+<li>Counts and percentages below are out of n = 10 synthetic personas. They are not statistically meaningful and must not be quoted as market data.
+</li>
+<li>The personas were written from the founder's deck, so they may reflect the founders' own assumptions back at them. Agreement with the deck is therefore weak evidence. Disagreement with the deck is more informative, but it still needs real-world confirmation.
+</li></ul>
+</div><h2 id="source-and-method">Source and method</h2>
+<p>Sources used by this dashboard:</p>
+<ul>
+<li>01_synthetic_end_users.md: 10 persona profiles (P1 to P10), each with demographics, psychographics, behaviors and a backstory.
+</li>
+<li>02_interview_script.md: 8 key assumptions (A1 to A8), ranked riskiest first, plus interview script v1 (W1 to W3, Q1 to Q10, C1 to C2, and the Z1 concept reaction).
+</li>
+<li>transcripts/P1.md to transcripts/P10.md: one simulated interview per persona, each with neutral interviewer notes and a stated WTP_MONTHLY line.
+</li></ul>
+<p>Method:</p>
+<ul>
+<li>Scoring rule. Each assumption was scored per persona from what the persona said about past behavior in W1 to C2: what they did, paid for, muted or abandoned. Reactions to the Z1 concept read were counted only when they agreed with past behavior. Polite interest in Z1 was never counted as validation on its own.
+</li>
+<li>Score codes. V = Validated: past behavior clearly supports the assumption for this persona. P = Partially validated: some support, or support only under conditions that change the assumption in a material way. I = Invalidated: past behavior contradicts the assumption, or it does not apply to this persona.
+</li>
+<li>Overall verdict rule. Validated if V is 6 or more out of 10. Invalidated if I is 6 or more out of 10, or if V = 0 and I is 5 or more. Partially Validated otherwise.
+</li>
+<li>Confidence. Confidence is Low or Med only. No synthetic finding is rated High. It is Med when the past-behavior evidence was consistent across personas and Low when it rests on stated intent, or on a single persona (as with A8).
+</li>
+<li>Currency. USD was converted at 7.2 RMB per USD. P10's $20 is about ¥144.
+</li>
+<li>Phrase counts. Counts cover respondent answers only. Interviewer questions, the concept text and the interviewer notes were excluded. A persona counts once per phrase, however often they used it.
+</li>
+<li>Analyst caveat. All scores are the judgment of one analyst. The per-persona rationale is given so each score can be challenged.
+</li></ul>
+<h2 id="1-executive-summary">1. Executive summary</h2>
+<div class="kpis">
+<div class="kpi"><div class="k">Assumptions tested</div><div class="kv">8</div><div class="s">10 synthetic personas</div></div>
+<div class="kpi"><div class="k">Validated</div><div class="kv">0</div><div class="s"><span class="badge v">✓ none cleared ≥6/10</span></div></div>
+<div class="kpi"><div class="k">Partially validated</div><div class="kv">5</div><div class="s"><span class="badge p">◐ A1 A2 A4 A6 A8</span></div></div>
+<div class="kpi"><div class="k">Invalidated</div><div class="kv">3</div><div class="s"><span class="badge i">✕ A3 A5 A7</span></div></div>
+<div class="kpi"><div class="k">Median stated WTP</div><div class="kv">¥30</div><div class="s">mean ¥39.1 vs ARPU ¥78.9</div></div>
+<div class="kpi"><div class="k">Pay ¥39 unconditionally</div><div class="kv">0/10</div><div class="s">3/10 would pay ¥99 only via substitution</div></div>
+</div>
+<p>Executive summary of the Zero synthetic research (n = 10 synthetic personas, exploratory only):</p>
+<ul>
+<li>Biggest unmet need. Learners do not mainly lack motivation or explanations. What they lack is an accurate, zero-maintenance memory of their own mistakes and forgetting that turns into a concrete answer to "what should I work on tonight". 6 of 10 named this as their top problem at C2 (P1, P3, P4, P6, P9, P10), and 3 more named a close variant (P2, P5, P7). Every persona who tried to track this by hand abandoned it or let it go stale.
+</li>
+<li>Memory is the one concept element that drew real interest, but it is a pain reliever, not a return driver. A1 is Partially Validated (0 V / 7 P / 3 I). In every lapse the personas described, what brought them back was a deadline, guilt, peer comparison or a paid commitment. None came back because of a tool's memory.
+</li>
+<li>Two of Zero's four headline differentiators work against it as currently framed. Scaffolding (A3) is Invalidated (0 V / 3 P / 7 I): 9 of 10 said they would go back to free ChatGPT, Doubao (豆包) or DeepSeek if answers were withheld. Proactive push (A5) is Invalidated (0 V / 5 P / 5 I): all 10 had muted, ignored or abandoned a reminder, 督学 or 打卡 mechanism. Only highly specific, data-aware nudges drew any interest.
+</li>
+<li>The deck's core positioning, "starting and persisting" (没法开始 / 走不远), is Invalidated (A7: 2 V / 2 P / 6 I). Only P2 and P5 named motivation as their primary pain. For most personas the pain is diagnosis and prioritization: volume, forgetting, and not knowing where their errors are.
+</li>
+<li>Willingness to pay is low, seasonal and mostly a substitution for current spend. Median stated WTP is ¥30/month and the mean is ¥39.1/month. The mean is under half the current ¥78.9 ARPU. No persona would pay ¥39 without conditions. 3 of 10 would pay ¥99 or more, and only if Zero replaced something they already pay for (ChatGPT Plus, human 申论 批改 essay grading). 6 of 10 would pay only in the months before their exam.
+</li>
+<li>Accuracy is the gate before price. 7 of 10 have a one-strike rule: "wrong twice, I'm gone" (P1), or one wrong legal rule, drug fact or logic explanation and they delete the app (P4, P8, P9). The two highest-budget personas (P4, P9) call ¥99 "nothing" but pay ¥0 today because they do not trust AI.
+</li>
+<li>Tool fragmentation is real, but the pain is data silos and manual copying, not switching (A4 Partially Validated, 2 V / 4 P / 4 I). All 10 personas describe copying or pasting AI output by hand. Most say the switching itself is tolerable, and 6 of 10 insist Zero must export to or plug into Anki, Notion, Obsidian, UWorld or 粉笔 rather than replace them.
+</li></ul>
+<h2 id="2-quantitative-findings">2. Quantitative findings</h2>
+<h3 id="2a-assumption-scorecard-per-persona-matrix-a1-to-a8-by-p1-to-p10">2a. Assumption scorecard: per-persona matrix (A1 to A8 by P1 to P10)</h3>
+<p>Per-persona assumption scorecard. V = Validated, P = Partially validated, I = Invalidated. Scores are based on past behavior (see Source and method).</p>
+<div class="tbl"><table class="matrix"><thead><tr><th>Assumption</th><th>P1 Lin</th><th>P2 Zhao</th><th>P3 Chen</th><th>P4 Wang</th><th>P5 Liu</th><th>P6 Zhang</th><th>P7 Huang</th><th>P8 Zhou</th><th>P9 Sun</th><th>P10 Sofia</th></tr></thead><tbody><tr><td>A1 Memory drives multi-day return</td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td></tr><tr><td>A2 Pay ¥15-40 entry, share at ¥99+</td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td></tr><tr><td>A3 Prefer scaffolding over raw answers</td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td></tr><tr><td>A4 Tool fragmentation is a wanted fix</td><td><span class="badge v">✓ V</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td></tr><tr><td>A5 Proactive outreach is welcomed</td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td></tr><tr><td>A6 Willing to upload private materials</td><td><span class="badge v">✓ V</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge p">◐ P</span></td></tr><tr><td>A7 Primary pain is starting/persisting</td><td><span class="badge i">✕ I</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge i">✕ I</span></td></tr><tr><td>A8 Overseas need matches (see note)</td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge p">◐ P</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge i">✕ I</span></td><td><span class="badge v">✓ V</span></td><td><span class="badge p">◐ P</span></td></tr></tbody></table></div>
+<p>How A8 was scored. A8 asks whether overseas English-speaking learners share the same need and would adopt the same product. P10 Sofia is the only overseas persona, so she was scored on both need and adoption. She scored P: her need matches, but she would adopt only with UWorld and Anki integration, clear data ownership, r/MCAT proof and a substitution-only price. P1 to P9 were scored on whether their C2 core need matches P10's need pattern: "remember all my mistakes and tell me what to do tonight", meaning a memory of mistakes or forgetting plus next-action prioritization, answer-first, running alongside tools they already have. V = same pattern. P = adjacent pattern (accountability, or multi-project context). I = a different need (P5 wants cram shortcuts; P8 wants cited card generation). A8 counts therefore measure need convergence between markets, not overseas adoption.</p>
+<h3 id="2a-assumption-scorecard-per-persona-rationale">2a. Assumption scorecard: per-persona rationale</h3>
+<p>Assumption scorecard rationale, one line per assumption, citing the behavior behind the scores:</p>
+<ul>
+<li>A1 rationale. No persona returned because of a tool's memory. Returns came from guilt or the 自习室 fee (P2), peer posts (P3, P7), the exam date (P5, P6, P8), the Saturday class (P9) and Reddit posts (P10). The P scores are personas for whom memory would cut the cost of re-orientation or decay: P1 took about 1 hour to re-orient, P3 loses about 10 minutes per switch, P4 has 民法 decay, P6 has a notes "graveyard", P7 notes 粉笔 gets her going "in two minutes", P10 spends about 15 minutes, and P2 wants skip-aware nudges. I scores: P5 restarts from chapter 1 every time, P8 already has Anki, and P9 is reset by his class and tutor.
+</li>
+<li>A2 rationale. V: P1 already pays ¥68/mo for ChatGPT and would switch at ¥68, up to ¥99. P7 already spends ¥150-250/mo on 申论 批改 (essay grading) and would pay ¥60, or ¥99 if Zero replaced 批改. P: payment is capped, seasonal or conditional on substitution (P2 ¥30, P3 ¥39, P6 ¥20, P8 ¥30 with citations only, P10 ¥144 only if she cancels ChatGPT). I: ¥0 today (P4, P5, P9).
+</li>
+<li>A3 rationale. 7 of 10 described past behavior that rejects withheld answers: closed a tab or app, went back to free AI, or want the answer and then drill. P2 and P3 accept scaffolding "in principle" but bypass it when tired or rushed. P8 accepts it only with a source citation on every step.
+</li>
+<li>A4 rationale. V: P1 (40 min/day of Notion upkeep, "I resent that time") and P3 ("tiring in a quiet way", three tracking places that "none of them talk to each other"). P: the pain is silos or copying rather than switching (P4, P7, P8, P10). I: P2 ("the phone is the problem"), P5, P6 ("I'd be suspicious of an all-in-one"), P9.
+</li>
+<li>A5 rationale. All 10 had muted, ignored, turned off or abandoned a reminder or 打卡 mechanism. P = openly asked for a specific, data-aware check-in: P1 "on pace", P2 "you haven't touched OS in four days", P3 "knowing why I disappeared", P4 "what I'm forgetting", P10 "you've missed three enzyme questions". I = rejected outreach outright.
+</li>
+<li>A6 rationale. V: already uploading freely (P1, P2, P6). P: willing for some materials only, or blocked by format (P3 won't upload her thesis; P5 has only phone photos; P7 is phone-only; P10 avoids paid Kaplan and UWorld PDFs). I: P4 (watermarked 讲义 carrying his name, risk of an account ban), P8 (内部资料 "internal material, do not share" slides, DRM-locked e-books), P9 ("I just don't see the point").
+</li>
+<li>A7 rationale. V: P2 ("I can study, I just can't make myself keep studying") and P5 ("Starting before it's too late"). P: P3 keeping parallel threads alive, P6 reviewing is a "discipline issue". I: volume and accuracy (P1, P8), forgetting and grading (P4), 申论 feedback (P7), weeknight hours (P9), plateau diagnosis (P10).
+</li>
+<li>A8 rationale. See "How A8 was scored" above.
+</li></ul>
+<h3 id="2a-assumption-scorecard-summary-table">2a. Assumption scorecard: summary table</h3>
+<div class="chart"><h4>Assumption scorecard — share of 10 personas</h4>
+<p class="sub">Each bar is 10 personas. Hover a segment for who. Verdict rule: Validated if V ≥ 6; Invalidated if I ≥ 6 or (V = 0 and I ≥ 5).</p>
+<div class="legend"><span><i class="sw" style="background:var(--good)"></i>✓ Validated</span><span><i class="sw" style="background:var(--warn)"></i>◐ Partially validated</span><span><i class="sw" style="background:var(--crit)"></i>✕ Invalidated</span></div>
+<div class="row"><div class="lab"><b>A1</b> Persistent cross-session memory drives multi-day return<small><span class="badge p">Partially Validated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A1: 0 validated, 7 partial, 3 invalidated of 10"><div class="seg p" style="width:70.0%" data-tip="A1 · Partial: 7/10 (70%) — P1, P2, P3, P4, P6, P7, P10"></div><div class="seg i" style="width:30.0%" data-tip="A1 · Invalidated: 3/10 (30%) — P5, P8, P9"></div></div><div class="val">0 / 7 / 3</div></div><div class="row"><div class="lab"><b>A2</b> Will pay ¥15-40 entry and a meaningful share ¥99+ Pro for private-document tutoring<small><span class="badge p">Partially Validated</span> · confidence Low</small></div><div class="track" role="img" aria-label="A2: 2 validated, 5 partial, 3 invalidated of 10"><div class="seg v" style="width:20.0%" data-tip="A2 · Validated: 2/10 (20%) — P1, P7"></div><div class="seg p" style="width:50.0%" data-tip="A2 · Partial: 5/10 (50%) — P2, P3, P6, P8, P10"></div><div class="seg i" style="width:30.0%" data-tip="A2 · Invalidated: 3/10 (30%) — P4, P5, P9"></div></div><div class="val">2 / 5 / 3</div></div><div class="row"><div class="lab"><b>A3</b> Prefer proactive guidance/scaffolding over instant raw answers<small><span class="badge i">Invalidated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A3: 0 validated, 3 partial, 7 invalidated of 10"><div class="seg p" style="width:30.0%" data-tip="A3 · Partial: 3/10 (30%) — P2, P3, P8"></div><div class="seg i" style="width:70.0%" data-tip="A3 · Invalidated: 7/10 (70%) — P1, P4, P5, P6, P7, P9, P10"></div></div><div class="val">0 / 3 / 7</div></div><div class="row"><div class="lab"><b>A4</b> Tool fragmentation causes cognitive fatigue learners want solved<small><span class="badge p">Partially Validated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A4: 2 validated, 4 partial, 4 invalidated of 10"><div class="seg v" style="width:20.0%" data-tip="A4 · Validated: 2/10 (20%) — P1, P3"></div><div class="seg p" style="width:40.0%" data-tip="A4 · Partial: 4/10 (40%) — P4, P7, P8, P10"></div><div class="seg i" style="width:40.0%" data-tip="A4 · Invalidated: 4/10 (40%) — P2, P5, P6, P9"></div></div><div class="val">2 / 4 / 4</div></div><div class="row"><div class="lab"><b>A5</b> Proactive outreach is welcomed, not annoying<small><span class="badge i">Invalidated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A5: 0 validated, 5 partial, 5 invalidated of 10"><div class="seg p" style="width:50.0%" data-tip="A5 · Partial: 5/10 (50%) — P1, P2, P3, P4, P10"></div><div class="seg i" style="width:50.0%" data-tip="A5 · Invalidated: 5/10 (50%) — P5, P6, P7, P8, P9"></div></div><div class="val">0 / 5 / 5</div></div><div class="row"><div class="lab"><b>A6</b> Willing to upload private/copyrighted course materials<small><span class="badge p">Partially Validated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A6: 3 validated, 4 partial, 3 invalidated of 10"><div class="seg v" style="width:30.0%" data-tip="A6 · Validated: 3/10 (30%) — P1, P2, P6"></div><div class="seg p" style="width:40.0%" data-tip="A6 · Partial: 4/10 (40%) — P3, P5, P7, P10"></div><div class="seg i" style="width:30.0%" data-tip="A6 · Invalidated: 3/10 (30%) — P4, P8, P9"></div></div><div class="val">3 / 4 / 3</div></div><div class="row"><div class="lab"><b>A7</b> Primary pain is starting and persisting, not content or explanations<small><span class="badge i">Invalidated</span> · confidence Med</small></div><div class="track" role="img" aria-label="A7: 2 validated, 2 partial, 6 invalidated of 10"><div class="seg v" style="width:20.0%" data-tip="A7 · Validated: 2/10 (20%) — P2, P5"></div><div class="seg p" style="width:20.0%" data-tip="A7 · Partial: 2/10 (20%) — P3, P6"></div><div class="seg i" style="width:60.0%" data-tip="A7 · Invalidated: 6/10 (60%) — P1, P4, P7, P8, P9, P10"></div></div><div class="val">2 / 2 / 6</div></div><div class="row"><div class="lab"><b>A8</b> Overseas English-speaking learners share the same need and would adopt the same product<small><span class="badge p">Partially Validated</span> · confidence Low</small></div><div class="track" role="img" aria-label="A8: 5 validated, 3 partial, 2 invalidated of 10"><div class="seg v" style="width:50.0%" data-tip="A8 · Validated: 5/10 (50%) — P1, P4, P6, P7, P9"></div><div class="seg p" style="width:30.0%" data-tip="A8 · Partial: 3/10 (30%) — P2, P3, P10"></div><div class="seg i" style="width:20.0%" data-tip="A8 · Invalidated: 2/10 (20%) — P5, P8"></div></div><div class="val">5 / 3 / 2</div></div></div>
+<p>Summary of assumption verdicts with exact counts out of 10 synthetic personas:</p>
+<div class="tbl"><table><thead><tr><th>Assumption</th><th>Validated n (%)</th><th>Partial n (%)</th><th>Invalidated n (%)</th><th>Overall verdict</th><th>Confidence</th></tr></thead><tbody><tr><td>A1 Persistent memory drives multi-day return</td><td class="num">0 (0%)</td><td class="num">7 (70%)</td><td class="num">3 (30%)</td><td><span class="badge p">Partially Validated</span></td><td>Med</td></tr><tr><td>A2 Pay ¥15-40 entry and meaningful share ¥99+ Pro</td><td class="num">2 (20%)</td><td class="num">5 (50%)</td><td class="num">3 (30%)</td><td><span class="badge p">Partially Validated</span></td><td>Low</td></tr><tr><td>A3 Prefer scaffolding over instant raw answers</td><td class="num">0 (0%)</td><td class="num">3 (30%)</td><td class="num">7 (70%)</td><td><span class="badge i">Invalidated</span></td><td>Med</td></tr><tr><td>A4 Tool fragmentation causes fatigue users want solved</td><td class="num">2 (20%)</td><td class="num">4 (40%)</td><td class="num">4 (40%)</td><td><span class="badge p">Partially Validated</span></td><td>Med</td></tr><tr><td>A5 Proactive outreach is welcomed, not annoying</td><td class="num">0 (0%)</td><td class="num">5 (50%)</td><td class="num">5 (50%)</td><td><span class="badge i">Invalidated</span></td><td>Med</td></tr><tr><td>A6 Willing to upload private/copyrighted materials</td><td class="num">3 (30%)</td><td class="num">4 (40%)</td><td class="num">3 (30%)</td><td><span class="badge p">Partially Validated</span></td><td>Med</td></tr><tr><td>A7 Primary pain is starting and persisting</td><td class="num">2 (20%)</td><td class="num">2 (20%)</td><td class="num">6 (60%)</td><td><span class="badge i">Invalidated</span></td><td>Med</td></tr><tr><td>A8 Overseas learners share need and would adopt</td><td class="num">5 (50%)</td><td class="num">3 (30%)</td><td class="num">2 (20%)</td><td><span class="badge p">Partially Validated</span></td><td>Low</td></tr></tbody></table></div>
+<p>Verdict notes, per assumption:</p>
+<ul>
+<li>A1 (Partially Validated). Memory is valued as relief from the cost of re-orientation and forgetting, but it is not what brings people back. The deck's 63.5% return rate may be driven by the exam calendar. Test this with real users.
+</li>
+<li>A2 (Partially Validated, Low). The entry range of ¥15-40 roughly holds for 6 of 10 personas (P1, P2, P3, P7, P8, P10, all with conditions). The "meaningful share at ¥99+" half is weak: 3 of 10, all conditional on replacing existing spend. Confidence is Low because stated WTP is the least reliable synthetic output.
+</li>
+<li>A3 (Invalidated). Invalidated as a default mode. "Answer first, then let me test myself" is the preferred pattern.
+</li>
+<li>A4 (Partially Validated). Reframe the pain from "too many tools" to "my records don't connect, and I copy by hand".
+</li>
+<li>A5 (Invalidated). Invalidated for generic or streak-style push. A narrower hypothesis, specific and content-aware nudges, is untested: 5 personas asked for it, but none has ever experienced it.
+</li>
+<li>A6 (Partially Validated). Barriers split between effort and format (phone photos, scanning, DRM) and rules or ownership (watermarks, 内部资料, thesis, paid question banks). Privacy is not the only barrier.
+</li>
+<li>A7 (Invalidated). The primary pain is prioritization and diagnosis, not motivation. The two personas it fits (P2, P5) have the lowest WTP.
+</li>
+<li>A8 (Partially Validated, Low). The need pattern converges across markets (8 of 10 V or P). Adoption of the same product is only partial for the single overseas persona. With n = 1 overseas persona, this cannot be confirmed.
+</li></ul>
+<h3 id="2b-willingness-to-pay-distribution-per-persona-table">2b. Willingness-to-pay distribution: per-persona table</h3>
+<div class="chart"><h4>Stated monthly WTP per persona (RMB)</h4>
+<p class="sub">Dark = stated amount, light = conditional ceiling. Current ARPU ¥78.9 sits at 55% of this axis; P10's ¥144 is a ChatGPT Plus substitution (¥0 incremental).</p>
+<div class="legend"><span><i class="sw" style="background:var(--bar)"></i>Stated WTP</span><span><i class="sw" style="background:var(--bar-2)"></i>Conditional ceiling</span></div>
+<div class="row"><div class="lab"><b>P10</b> Sofia Martinez<small>¥99+ · seasonal</small></div><div class="track"><div class="seg b" style="width:100.0%" data-tip="P10 stated ¥144/mo — $20 only as replacement for ChatGPT Plus; $0 incremental (maybe $10 for 3 months pre-test); needs r/MCAT proof, UWorld/Anki integration, data ownership/deletion"></div></div><div class="val">¥144</div></div><div class="row"><div class="lab"><b>P1</b> Lin Zihan<small>¥50-99 · seasonal</small></div><div class="track"><div class="seg b" style="width:47.22222222222222%" data-tip="P1 stated ¥68/mo — Replaces shared ChatGPT Plus; ¥99 ceiling only if it also replaces most Notion upkeep and is accurate on pharmacology; 1-week free trial; stops after December exam"></div><div class="seg b2" style="width:21.52777777777778%" data-tip="P1 conditional ceiling ¥99/mo"></div></div><div class="val">¥68 → ¥99</div></div><div class="row"><div class="lab"><b>P7</b> Huang Yutong<small>¥50-99 · seasonal</small></div><div class="track"><div class="seg b" style="width:41.66666666666667%" data-tip="P7 stated ¥60/mo — Strict, fast 申论 feedback; ¥99 only if it fully replaces human 批改 after proof vs teacher; phone-only; ~3 months until exam; no annual plan"></div><div class="seg b2" style="width:27.083333333333332%" data-tip="P7 conditional ceiling ¥99/mo"></div></div><div class="val">¥60 → ¥99</div></div><div class="row"><div class="lab"><b>P3</b> Chen Siqi<small>¥30-49</small></div><div class="track"><div class="seg b" style="width:27.083333333333332%" data-tip="P3 stated ¥39/mo — Free trial that works in first session with no setup; must replace on-and-off ChatGPT Plus; ¥99 not affordable as student"></div></div><div class="val">¥39</div></div><div class="row"><div class="lab"><b>P2</b> Zhao Mingyuan<small>¥30-49</small></div><div class="track"><div class="seg b" style="width:20.833333333333336%" data-tip="P2 stated ¥30/mo — Hard ceiling; free trial; no annual prepay; outreach must be specific; would not pay ¥99"></div></div><div class="val">¥30</div></div><div class="row"><div class="lab"><b>P8</b> Zhou Xinran<small>¥30-49</small></div><div class="track"><div class="seg b" style="width:20.833333333333336%" data-tip="P8 stated ¥30/mo — Only for Anki card generation with source-page citation per card; ¥0 for concept as described; needs senior/teacher endorsement; ≥¥50 she keeps making cards herself"></div></div><div class="val">¥30</div></div><div class="row"><div class="lab"><b>P6</b> Zhang Wei<small>¥1-29 · seasonal</small></div><div class="track"><div class="seg b" style="width:13.88888888888889%" data-tip="P6 stated ¥20/mo — About the cost of API calls; requires Obsidian Markdown read/write and export/API; ¥0 if it requires leaving Obsidian; only 2-3 months around finals"></div></div><div class="val">¥20</div></div><div class="row"><div class="lab"><b>P4</b> Wang Hao<small>¥0 · seasonal</small></div><div class="track"><div class="seg b2" style="width:27.083333333333332%" data-tip="P4 conditional ceiling ¥39/mo"></div></div><div class="val">¥0 → ¥39</div></div><div class="row"><div class="lab"><b>P5</b> Liu Jiayi<small>¥0 · seasonal</small></div><div class="track"><div class="seg b2" style="width:10.416666666666668%" data-tip="P5 conditional ceiling ¥15/mo"></div></div><div class="val">¥0 → ¥15</div></div><div class="row"><div class="lab"><b>P9</b> Sun Jianguo<small>¥0</small></div><div class="track"></div><div class="val">¥0</div></div></div>
+<p>Stated monthly WTP per persona, in RMB (USD converted at 7.2), with each persona's conditions. Source: the C2 answer and the WTP_MONTHLY line in each transcript.</p>
+<div class="tbl"><table><thead><tr><th>Persona</th><th>Stated monthly WTP (RMB)</th><th>Bucket</th><th>Conditions and ceiling</th><th>Paying months</th></tr></thead><tbody><tr><td>P1 Lin Zihan</td><td class="num">68</td><td>¥50-99</td><td>Replaces her shared ChatGPT Plus (¥68); up to ¥99 only if it also replaces most Notion upkeep and is accurate on pharmacology; 1-week free trial; "wrong twice" and she leaves</td><td>Until December exam, then stops</td></tr><tr><td>P2 Zhao Mingyuan</td><td class="num">30</td><td>¥30-49</td><td>"That's really the top"; free trial; no annual prepay; will not pay ¥99; outreach must be specific</td><td>Not stated; no annual commitment</td></tr><tr><td>P3 Chen Siqi</td><td class="num">39</td><td>¥30-49</td><td>Free trial that works in session one with no setup; must replace on-and-off ChatGPT Plus; ¥99 "is not" affordable as a student</td><td>Would drop after 1-2 months if it does not replace ChatGPT</td></tr><tr><td>P4 Wang Hao</td><td class="num">0</td><td class="num">¥0</td><td>¥0 now (3 weeks before exam). Hypothetical ¥39 in June to October of a retake year, if proven by people who passed and error-free on 厚大 讲义 (course handouts); would fund it by dropping the 批改 package</td><td>Peak months only (June to October)</td></tr><tr><td>P5 Liu Jiayi</td><td class="num">0</td><td class="num">¥0</td><td>¥0 during the semester; about ¥15 one-off in finals month only; "¥39 is like eight cups of milk tea"</td><td>Finals month only</td></tr><tr><td>P6 Zhang Wei</td><td class="num">20</td><td>¥1-29</td><td>About the cost of API calls; must read and write Obsidian Markdown with export or API; ¥0 if he has to leave Obsidian; ¥99 and he would build it himself</td><td>2-3 months around finals</td></tr><tr><td>P7 Huang Yutong</td><td class="num">60</td><td>¥50-99</td><td>Strict, fast 申论 feedback; ¥99 only if it fully replaces human 批改 and is proven against her teacher's grading; phone-only; no annual plan</td><td>About 3 months, until the December exam</td></tr><tr><td>P8 Zhou Xinran</td><td class="num">30</td><td>¥30-49</td><td>Only for Anki card generation where every card cites its textbook page; ¥0 for the concept as described; at ¥50 or more she would keep making cards herself; needs a senior's or teacher's endorsement</td><td>Not stated</td></tr><tr><td>P9 Sun Jianguo</td><td class="num">0</td><td class="num">¥0</td><td>¥0 for software ("¥99 is nothing", but trust is the issue); would instead pay his tutor about ¥1,600/mo more; might try free if his tutor or admitted colleagues endorse it</td><td>Not applicable</td></tr><tr><td>P10 Sofia Martinez</td><td>144 ($20)</td><td>¥99+</td><td>Only as a replacement for ChatGPT Plus; $0 incremental (maybe $10, about ¥72, for 3 months if it is an add-on); needs r/MCAT proof, UWorld and Anki integration, data deletion</td><td>About 3 months before April test (if add-on)</td></tr></tbody></table></div>
+<h3 id="2b-willingness-to-pay-distribution-buckets-and-statistics">2b. Willingness-to-pay distribution: buckets and statistics</h3>
+<div class="chart"><h4>WTP distribution by bucket</h4><p class="sub">Count of 10 personas per monthly bucket.</p>
+<div class="vbars"><div class="vcol"><span class="n">3 · 30%</span><div class="bar" style="height:80.0%" data-tip="¥0: 3 of 10 personas"></div></div><div class="vcol"><span class="n">1 · 10%</span><div class="bar" style="height:26.666666666666664%" data-tip="¥1-29: 1 of 10 personas"></div></div><div class="vcol"><span class="n">3 · 30%</span><div class="bar" style="height:80.0%" data-tip="¥30-49: 3 of 10 personas"></div></div><div class="vcol"><span class="n">2 · 20%</span><div class="bar" style="height:53.33333333333333%" data-tip="¥50-99: 2 of 10 personas"></div></div><div class="vcol"><span class="n">1 · 10%</span><div class="bar" style="height:26.666666666666664%" data-tip="¥99+: 1 of 10 personas"></div></div></div><div class="vlabels"><div>¥0</div><div>¥1-29</div><div>¥30-49</div><div>¥50-99</div><div>¥99+</div></div></div>
+<p>WTP bucket distribution (n = 10 synthetic personas, headline stated value):</p>
+<div class="tbl"><table><thead><tr><th>WTP bucket (monthly)</th><th>Count</th><th>Percent</th><th>Personas</th></tr></thead><tbody><tr><td class="num">¥0</td><td class="num">3</td><td class="num">30%</td><td>P4, P5, P9</td></tr><tr><td>¥1-29</td><td class="num">1</td><td class="num">10%</td><td>P6</td></tr><tr><td>¥30-49</td><td class="num">3</td><td class="num">30%</td><td>P2, P3, P8</td></tr><tr><td>¥50-99</td><td class="num">2</td><td class="num">20%</td><td>P1, P7</td></tr><tr><td>¥99+</td><td class="num">1</td><td class="num">10%</td><td>P10 (substitution only)</td></tr></tbody></table></div>
+<p>WTP summary statistics:</p>
+<div class="tbl"><table><thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead><tbody><tr><td>Mean stated WTP</td><td>¥39.1/month</td><td>Sum ¥391 / 10; 50% of current ARPU of ¥78.9</td></tr><tr><td>Median stated WTP</td><td>¥30/month</td><td>Sorted: 0, 0, 0, 20, 30, 30, 39, 60, 68, 144</td></tr><tr><td>Mean if P10 is scored at her incremental $0</td><td>¥24.7/month</td><td>P10 pays only by cancelling ChatGPT Plus</td></tr><tr><td>Median if P10 is scored at her incremental $0</td><td>¥25/month</td><td></td></tr><tr><td>Mean, 9 domestic personas only</td><td>¥27.4/month</td><td>Excludes P10</td></tr><tr><td>Would pay ¥39 or more unconditionally</td><td>0 of 10 (0%)</td><td>Every stated amount carries at least one condition</td></tr><tr><td>Stated ¥39 or more, with conditions</td><td>4 of 10 (40%)</td><td>P1, P3, P7, P10 (5 of 10 if P4's hypothetical retake-year ¥39 is counted)</td></tr><tr><td>Would pay ¥99 or more, conditionally</td><td>3 of 10 (30%)</td><td>P1, P7, P10</td></tr><tr><td>Explicitly reject ¥99 on price or build-it-yourself grounds</td><td>5 of 10 (50%)</td><td>P2, P3, P5, P6, P8</td></tr><tr><td>Say ¥99 is affordable, but pay ¥0 on trust</td><td>2 of 10 (20%)</td><td>P4, P9</td></tr></tbody></table></div>
+<p>Conditions attached to ¥99 (the Pro tier):</p>
+<ul>
+<li>P1. Zero must replace both ChatGPT Plus and most of her 40 min/day Notion upkeep, and be accurate on pharmacology facts. ¥99 is "the ceiling", and she would cut eating out to afford it.
+</li>
+<li>P7. Zero must fully replace human 申论 批改 (essay grading), after she has seen it grade several essays in line with her teacher's comments.
+</li>
+<li>P10. $20 (about ¥144) only if she cancels ChatGPT Plus for studying. If it is an add-on, $0 to $10.
+</li>
+<li>Common pattern. In all three cases ¥99+ is money moved from an existing line item (ChatGPT, or human grading). It is not new budget. The deck's Pro-upgrade path to a ¥78.9 ARPU implies the product must credibly displace ChatGPT Plus or a paid human service.
+</li></ul>
+<h3 id="2b-willingness-to-pay-distribution-seasonality-of-payment">2b. Willingness-to-pay distribution: seasonality of payment</h3>
+<p>Seasonality and commitment patterns in stated WTP:</p>
+<ul>
+<li>6 of 10 (60%) explicitly limit payment to exam-proximate months: P1 (until December), P4 (June to October only), P5 (finals month only), P6 (2-3 months around finals), P7 (about 3 months until December), P10 (3 months before the test if it is an add-on).
+</li>
+<li>2 of 10 explicitly refuse annual or upfront plans: P2 ("I wouldn't pay for a year up front, no way") and P7 ("I wouldn't want an annual plan").
+</li>
+<li>2 of 10 say they would not change their system close to an exam: P4 ("not going to change my system three weeks before the exam"), P7 (will not leave 粉笔 before December).
+</li>
+<li>Implication. This matches the deck's finding that 55% choose quarterly plans: the natural unit is one exam cycle, not an open-ended subscription. Expect heavy churn after exam dates. Annualized revenue per payer will be well below 12 times the monthly price, since most personas pay about 3 to 5 months per year.
+</li></ul>
+<h3 id="2c-top-objections-ranked-by-frequency">2c. Top objections ranked by frequency</h3>
+<div class="chart"><h4>Objections ranked by frequency</h4><p class="sub">Share of 10 personas raising each objection; hover for who.</p><div class="row"><div class="lab">Generic reminders/push will be muted</div><div class="track"><div class="seg b" style="width:100.0%" data-tip="10/10: P1, P2, P3, P4, P5, P6, P7, P8, P9, P10"></div></div><div class="val">10/10 · 100%</div></div><div class="row"><div class="lab">Withholding answers / Socratic guidance means going back to free AI</div><div class="track"><div class="seg b" style="width:90.0%" data-tip="9/10: P1, P2, P3, P4, P5, P6, P7, P9, P10"></div></div><div class="val">9/10 · 90%</div></div><div class="row"><div class="lab">One factual error means deleting it (accuracy/trust gate)</div><div class="track"><div class="seg b" style="width:70.0%" data-tip="7/10: P1, P3, P4, P7, P8, P9, P10"></div></div><div class="val">7/10 · 70%</div></div><div class="row"><div class="lab">Setup/upload effort too high (PDF, scanning, desktop, &gt;5-10 min)</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6/10: P2, P3, P4, P5, P7, P9"></div></div><div class="val">6/10 · 60%</div></div><div class="row"><div class="lab">Must export to or integrate with existing system, not replace it</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6/10: P1, P4, P6, P7, P8, P10"></div></div><div class="val">6/10 · 60%</div></div><div class="row"><div class="lab">Needs a free trial before paying</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6/10: P1, P2, P3, P6, P9, P10"></div></div><div class="val">6/10 · 60%</div></div><div class="row"><div class="lab">Need ends at exam; no annual/off-season payment</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6/10: P1, P4, P5, P6, P7, P10"></div></div><div class="val">6/10 · 60%</div></div><div class="row"><div class="lab">Must replace existing spend, not be an additional subscription</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5/10: P1, P3, P4, P7, P10"></div></div><div class="val">5/10 · 50%</div></div><div class="row"><div class="lab">Data privacy/copyright/ownership of uploads</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5/10: P3, P4, P6, P8, P10"></div></div><div class="val">5/10 · 50%</div></div><div class="row"><div class="lab">Requires trusted peer or expert endorsement first</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5/10: P3, P4, P8, P9, P10"></div></div><div class="val">5/10 · 50%</div></div><div class="row"><div class="lab">Price above free-alternative ceiling</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5/10: P2, P3, P5, P6, P8"></div></div><div class="val">5/10 · 50%</div></div><div class="row"><div class="lab">Will not switch systems close to exam</div><div class="track"><div class="seg b" style="width:20.0%" data-tip="2/10: P4, P7"></div></div><div class="val">2/10 · 20%</div></div><div class="row"><div class="lab">Feels like a gimmick / built for teenagers</div><div class="track"><div class="seg b" style="width:20.0%" data-tip="2/10: P6, P10"></div></div><div class="val">2/10 · 20%</div></div><div class="row"><div class="lab">Content-specific handling gaps (structures/tables; multi-project)</div><div class="track"><div class="seg b" style="width:20.0%" data-tip="2/10: P1, P3"></div></div><div class="val">2/10 · 20%</div></div></div>
+<p>Objections to the Zero concept, ranked by the number of personas raising them (anywhere in the interview, backed by past behavior where available). n = 10.</p>
+<div class="tbl"><table><thead><tr><th>Rank</th><th>Objection</th><th>Count</th><th>Percent</th><th>Personas</th></tr></thead><tbody><tr><td class="num">1</td><td>Generic reminders or push will be muted (has muted, ignored or abandoned a reminder, 督学, 打卡 or streak mechanism before)</td><td class="num">10</td><td class="num">100%</td><td>P1, P2, P3, P4, P5, P6, P7, P8, P9, P10</td></tr><tr><td class="num">2</td><td>Withholding the answer or Socratic guidance means going back to free ChatGPT, Doubao or DeepSeek</td><td class="num">9</td><td class="num">90%</td><td>P1, P2, P3, P4, P5, P6, P7, P9, P10</td></tr><tr><td class="num">3</td><td>One factual error means deleting it (accuracy and trust gate)</td><td class="num">7</td><td class="num">70%</td><td>P1, P3, P4, P7, P8, P9, P10</td></tr><tr><td class="num">4</td><td>Setup or upload effort too high (PDF upload, scanning, desktop-only, more than 5-10 minutes)</td><td class="num">6</td><td class="num">60%</td><td>P2, P3, P4, P5, P7, P9</td></tr><tr><td class="num">5</td><td>Must export to or integrate with the existing system (Anki, Notion, Obsidian, UWorld, 粉笔, 厚大 chapter structure), not replace it</td><td class="num">6</td><td class="num">60%</td><td>P1, P4, P6, P7, P8, P10</td></tr><tr><td class="num">6</td><td>Needs a free trial before paying</td><td class="num">6</td><td class="num">60%</td><td>P1, P2, P3, P6, P9, P10</td></tr><tr><td class="num">7</td><td>Need ends at the exam; no annual or off-season payment</td><td class="num">6</td><td class="num">60%</td><td>P1, P4, P5, P6, P7, P10</td></tr><tr><td class="num">8</td><td>Must replace existing spend, not be an additional subscription</td><td class="num">5</td><td class="num">50%</td><td>P1, P3, P4, P7, P10</td></tr><tr><td class="num">9</td><td>Data privacy, copyright or ownership of uploads (thesis, watermarked 讲义, 内部资料, training use, deletion, export)</td><td class="num">5</td><td class="num">50%</td><td>P3, P4, P6, P8, P10</td></tr><tr><td class="num">10</td><td>Requires endorsement from trusted peers or experts first (cohort, people who passed, senior or teacher, tutor, r/MCAT)</td><td class="num">5</td><td class="num">50%</td><td>P3, P4, P8, P9, P10</td></tr><tr><td class="num">11</td><td>Price above the free-alternative ceiling (free AI or DIY is good enough)</td><td class="num">5</td><td class="num">50%</td><td>P2, P3, P5, P6, P8</td></tr><tr><td class="num">12</td><td>Timing: will not switch systems close to the exam</td><td class="num">2</td><td class="num">20%</td><td>P4, P7</td></tr><tr><td class="num">13</td><td>Feels like a gimmick or "built for teenagers" (edtech wrapper)</td><td class="num">2</td><td class="num">20%</td><td>P6, P10</td></tr><tr><td class="num">14</td><td>Content-specific handling gaps (chemical structures and tables in PDFs; a single subject only, not thesis plus CPA)</td><td class="num">2</td><td class="num">20%</td><td>P1, P3</td></tr></tbody></table></div>
+<p>Reading the objection ranking:</p>
+<ul>
+<li>The top two objections target two of Zero's four headline features (push and scaffolding), and they rest on past behavior, not speculation.
+</li>
+<li>Objections 3, 5, 9 and 10 together describe a trust stack. Zero has to be accurate, cite its sources, plug into tools users already trust, and be vouched for by someone the user trusts. Price comes after trust for the higher-budget personas.
+</li></ul>
+<h2 id="3-qualitative-findings">3. Qualitative findings</h2>
+<h3 id="3a-representative-verbatim-quotes-a1-persistent-memory-and-return">3a. Representative verbatim quotes: A1 persistent memory and return</h3>
+<p>Verbatim quotes on Assumption A1 (persistent cross-session memory drives multi-day return). Verdict: Partially Validated.</p>
+<ul>
+<li>P1 Lin Zihan: "The AI tools don't know anything about it; every session they start from zero."
+</li>
+<li>P7 Huang Yutong: "For 行测 it didn't matter, because 粉笔 just drops me back where I stopped and shows my accuracy, so I got going in two minutes."
+</li>
+<li>P5 Liu Jiayi: "\"Remembers your progress\" sounds nice, but I don't have progress to remember, I restart every time."
+</li>
+<li>P9 Sun Jianguo: "So the class schedule is what resets me."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a2-willingness-to-pay">3a. Representative verbatim quotes: A2 willingness to pay</h3>
+<p>Verbatim quotes on Assumption A2 (pay ¥15-40 entry and a meaningful share ¥99+). Verdict: Partially Validated.</p>
+<ul>
+<li>P1 Lin Zihan: "Realistically, I'd pay ¥68 a month, the same as ChatGPT, and I'd drop the shared ChatGPT account to make room"
+</li>
+<li>P5 Liu Jiayi: "¥39 is like eight cups of milk tea, no way, and ¥99 is crazy for a student."
+</li>
+<li>P9 Sun Jianguo: "Not because ¥99 is expensive, ¥99 is nothing. It's because I don't trust it to pick the right topic, and if it picks wrong, I lose the evening, which is the thing I actually care about."
+</li>
+<li>P10 Sofia Martinez: "So the honest answer is about $20 a month, but only if it replaces ChatGPT Plus for studying, meaning I'd cancel ChatGPT."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a3-scaffolding-versus-raw-answers">3a. Representative verbatim quotes: A3 scaffolding versus raw answers</h3>
+<p>Verbatim quotes on Assumption A3 (learners prefer scaffolding over instant raw answers). Verdict: Invalidated.</p>
+<ul>
+<li>P5 Liu Jiayi: "Once I tried an app where the AI kept asking me \"what do you think the first step is?\" and I didn't know, that's why I was asking! It made me feel stupid so I closed it."
+</li>
+<li>P6 Zhang Wei: "If something had asked me \"what do you think the potential should be?\" I'd have closed the tab."
+</li>
+<li>P2 Zhao Mingyuan: "The \"step by step instead of giving answers\" part, I know it's good for me, but honestly if I'm tired at 4pm and it won't just tell me the answer, I'll open 豆包 in the other tab."
+</li>
+<li>P1 Lin Zihan: "with 110 days left I don't have time to be Socratic-methoded about aminoglycosides; sometimes I just need the table, correctly, now."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a4-tool-fragmentation">3a. Representative verbatim quotes: A4 tool fragmentation</h3>
+<p>Verbatim quotes on Assumption A4 (tool fragmentation causes cognitive fatigue that learners want solved). Verdict: Partially Validated.</p>
+<ul>
+<li>P1 Lin Zihan: "It's not unbearable — I'm used to it, I built it — but it's clunky and the copying is pure waste."
+</li>
+<li>P3 Chen Siqi: "It's tiring in a quiet way. No single tool is bad, but switching costs me focus every time."
+</li>
+<li>P2 Zhao Mingyuan: "So switching tools isn't the problem, the phone is the problem. I wouldn't pay anything just to have fewer apps, if that's what you're asking."
+</li>
+<li>P10 Sofia Martinez: "What bugs me more is that none of them talk to each other, so the \"what's my weak area\" thinking only happens in my head."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a5-proactive-outreach">3a. Representative verbatim quotes: A5 proactive outreach</h3>
+<p>Verbatim quotes on Assumption A5 (proactive outreach is welcomed, not annoying). Verdict: Invalidated for generic push. Specific, data-aware nudges are untested.</p>
+<ul>
+<li>P2 Zhao Mingyuan: "It was the same template every day, \"同学们早上好，今天也要加油哦\", you could tell nobody was actually looking at me."
+</li>
+<li>P2 Zhao Mingyuan: "It would have to know specifically what I skipped, like \"你已经四天没碰操作系统了，上次你卡在PV操作\" — that would actually get me."
+</li>
+<li>P4 Wang Hao: "If something checked in on me, it would need to be about what I'm forgetting, not whether I'm studying. The second kind just annoys me." (The transcript italicizes "what" and "whether".)
+</li>
+<li>P1 Lin Zihan: "Honestly, I don't need someone to push me to show up. What I'd want is something that checks whether I'm on pace, not whether I'm awake."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a6-uploading-private-materials">3a. Representative verbatim quotes: A6 uploading private materials</h3>
+<p>Verbatim quotes on Assumption A6 (learners will upload private or copyrighted course materials). Verdict: Partially Validated.</p>
+<ul>
+<li>P1 Lin Zihan: "I upload them freely to Kimi, ChatGPT, whatever. I don't really worry about privacy for textbooks, they're everywhere anyway."
+</li>
+<li>P8 Zhou Xinran: "A lot of them literally say \"内部资料 请勿外传\" on the first slide, and I take that seriously."
+</li>
+<li>P5 Liu Jiayi: "But I don't have PDFs. It's all phone photos, like 200 of them. If an app wants me to upload a PDF or go to a computer to do it, I'm not going to do that."
+</li>
+<li>P4 Wang Hao: "The PDF versions are watermarked with my name and phone number, and the course terms say you can't distribute them."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a7-starting-and-persisting">3a. Representative verbatim quotes: A7 starting and persisting</h3>
+<p>Verbatim quotes on Assumption A7 (the primary pain is starting and persisting, not content or explanations). Verdict: Invalidated.</p>
+<ul>
+<li>P2 Zhao Mingyuan: "It's like, I can study, I just can't make myself keep studying."
+</li>
+<li>P4 Wang Hao: "I don't have a motivation problem, I have a savings problem, that's motivation enough."
+</li>
+<li>P9 Sun Jianguo: "I don't lack motivation. I lack hours. No app is going to give me hours."
+</li>
+<li>P10 Sofia Martinez: "Honestly it's the plateau and not knowing why."
+</li></ul>
+<h3 id="3a-representative-verbatim-quotes-a8-overseas-learners">3a. Representative verbatim quotes: A8 overseas learners</h3>
+<p>Verbatim quotes on Assumption A8 (overseas English-speaking learners share the need and would adopt the same product). Verdict: Partially Validated, Low confidence.</p>
+<ul>
+<li>P10 Sofia Martinez: "The \"remembers your progress\" part is literally the thing I've been complaining about, so that part gets my attention."
+</li>
+<li>P10 Sofia Martinez: "And I'd want to see people on r/MCAT actually say their score went up before I'd pay, a free trial isn't enough by itself."
+</li>
+<li>P7 Huang Yutong (domestic parallel to P10's need): "If it knew my recurring weaknesses and gave me tonight's one task, that's useful."
+</li></ul>
+<h3 id="3b-recurring-organic-language-patterns">3b. Recurring organic language patterns</h3>
+<div class="chart"><h4>Organic language — personas using each phrase</h4><p class="sub">Starting vocabulary to listen for in real interviews (shared-generator caveat applies).</p><div class="row"><div class="lab">“copy / paste”</div><div class="track"><div class="seg b" style="width:100.0%" data-tip="10 of 10 personas"></div></div><div class="val">10/10</div></div><div class="row"><div class="lab">“mute / turn off / swipe away / ignore”</div><div class="track"><div class="seg b" style="width:90.0%" data-tip="9 of 10 personas"></div></div><div class="val">9/10</div></div><div class="row"><div class="lab">“trust / don't trust”</div><div class="track"><div class="seg b" style="width:90.0%" data-tip="9 of 10 personas"></div></div><div class="val">9/10</div></div><div class="row"><div class="lab">“the answer”</div><div class="track"><div class="seg b" style="width:80.0%" data-tip="8 of 10 personas"></div></div><div class="val">8/10</div></div><div class="row"><div class="lab">“specific”</div><div class="track"><div class="seg b" style="width:80.0%" data-tip="8 of 10 personas"></div></div><div class="val">8/10</div></div><div class="row"><div class="lab">“annoying / annoy”</div><div class="track"><div class="seg b" style="width:80.0%" data-tip="8 of 10 personas"></div></div><div class="val">8/10</div></div><div class="row"><div class="lab">“waste / wasted”</div><div class="track"><div class="seg b" style="width:70.0%" data-tip="7 of 10 personas"></div></div><div class="val">7/10</div></div><div class="row"><div class="lab">“打卡”</div><div class="track"><div class="seg b" style="width:70.0%" data-tip="7 of 10 personas"></div></div><div class="val">7/10</div></div><div class="row"><div class="lab">“what should I do / what's next / tonight”</div><div class="track"><div class="seg b" style="width:70.0%" data-tip="7 of 10 personas"></div></div><div class="val">7/10</div></div><div class="row"><div class="lab">“generic”</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6 of 10 personas"></div></div><div class="val">6/10</div></div><div class="row"><div class="lab">“replace”</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6 of 10 personas"></div></div><div class="val">6/10</div></div><div class="row"><div class="lab">“free trial / free tier”</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6 of 10 personas"></div></div><div class="val">6/10</div></div><div class="row"><div class="lab">“delete it / I'm gone / I'm done”</div><div class="track"><div class="seg b" style="width:60.0%" data-tip="6 of 10 personas"></div></div><div class="val">6/10</div></div><div class="row"><div class="lab">“go back to ChatGPT / 豆包”</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5 of 10 personas"></div></div><div class="val">5/10</div></div><div class="row"><div class="lab">“tired”</div><div class="track"><div class="seg b" style="width:50.0%" data-tip="5 of 10 personas"></div></div><div class="val">5/10</div></div><div class="row"><div class="lab">“in my head”</div><div class="track"><div class="seg b" style="width:40.0%" data-tip="4 of 10 personas"></div></div><div class="val">4/10</div></div><div class="row"><div class="lab">“guilt”</div><div class="track"><div class="seg b" style="width:40.0%" data-tip="4 of 10 personas"></div></div><div class="val">4/10</div></div><div class="row"><div class="lab">“performative / performing studying”</div><div class="track"><div class="seg b" style="width:30.0%" data-tip="3 of 10 personas"></div></div><div class="val">3/10</div></div><div class="row"><div class="lab">“Socratic”</div><div class="track"><div class="seg b" style="width:30.0%" data-tip="3 of 10 personas"></div></div><div class="val">3/10</div></div><div class="row"><div class="lab">“graveyard”</div><div class="track"><div class="seg b" style="width:10.0%" data-tip="1 of 10 personas"></div></div><div class="val">1/10</div></div><div class="row"><div class="lab">“a system prompt with a subscription”</div><div class="track"><div class="seg b" style="width:10.0%" data-tip="1 of 10 personas"></div></div><div class="val">1/10</div></div></div>
+<p>The words the synthetic personas actually used, counted as the number of personas (out of 10) using each phrase or close variant in their answers. Interviewer questions, the concept text and the interviewer notes are excluded.</p>
+<div class="tbl"><table><thead><tr><th>Phrase or pattern (as users say it)</th><th>Personas using it</th><th>Who</th><th>What it signals</th></tr></thead><tbody><tr><td>"copy" / "paste" (moving AI output by hand)</td><td class="num">10</td><td>All</td><td>Manual transfer is universal; the real fragmentation pain</td></tr><tr><td>"mute" / "turn off" / "swipe away" / "ignore" (notifications, reminders)</td><td class="num">9</td><td>P1, P2, P3, P4, P5, P6, P7, P9, P10</td><td>Default response to outreach</td></tr><tr><td>"trust" / "don't trust"</td><td class="num">9</td><td>All except P5</td><td>Trust is the gating variable</td></tr><tr><td>"the answer" (want it, give me it, get it fast)</td><td class="num">8</td><td>P1, P2, P3, P5, P6, P7, P9, P10</td><td>Answer-first expectation</td></tr><tr><td>"specific" (outreach or feedback must be specific)</td><td class="num">8</td><td>P1, P2, P3, P4, P5, P6, P9, P10</td><td>Generic equals noise</td></tr><tr><td>"annoying" / "annoy"</td><td class="num">8</td><td>P1, P2, P3, P4, P5, P6, P7, P8</td><td>Low tolerance for friction</td></tr><tr><td>"waste" / "wasted" (time more than money)</td><td class="num">7</td><td>P1, P2, P4, P5, P7, P9, P10</td><td>Time is the scarce currency</td></tr><tr><td>"打卡" (check-in)</td><td class="num">7</td><td>P1, P2, P3, P4, P5, P7, P8</td><td>Familiar but short-lived accountability ritual</td></tr><tr><td>"what should I do" / "what's next" / "tonight"</td><td class="num">7</td><td>P3, P4, P5, P7, P8, P9, P10</td><td>Prioritization is the job to be done</td></tr><tr><td>"generic" (describing reminders, plans or feedback)</td><td class="num">6</td><td>P1, P3, P4, P7, P9, P10</td><td>The word users use to dismiss 督学-style services</td></tr><tr><td>"replace" (Zero must replace X)</td><td class="num">6</td><td>P1, P3, P7, P8, P9, P10</td><td>Substitution, not addition</td></tr><tr><td>"free trial" / "free tier" / "try it free"</td><td class="num">6</td><td>P1, P2, P3, P6, P9, P10</td><td>Trial is table stakes</td></tr><tr><td>"delete it" / "I'm gone" / "I'm done" (one-strike exit)</td><td class="num">6</td><td>P1, P3, P4, P8, P9, P10</td><td>Unforgiving on errors</td></tr><tr><td>"go back to ChatGPT / 豆包"</td><td class="num">5</td><td>P1, P2, P3, P5, P10</td><td>Free AI is the default fallback</td></tr><tr><td>"tired"</td><td class="num">5</td><td>P2, P3, P7, P9, P10</td><td>Evening fatigue drives the answer-first preference</td></tr><tr><td>"in my head" (tracking lives only in my head)</td><td class="num">4</td><td>P2, P6, P7, P10</td><td>No external record of weaknesses</td></tr><tr><td>"guilt"</td><td class="num">4</td><td>P2, P5, P9, P10</td><td>Guilt, not tools, is the return trigger</td></tr><tr><td>"performative" / "performing studying" (about 打卡 groups)</td><td class="num">3</td><td>P6, P7, P8</td><td>Social check-ins feel fake</td></tr><tr><td>"Socratic"</td><td class="num">3</td><td>P1, P7, P10</td><td>Used only negatively</td></tr><tr><td>"graveyard" (notes never reviewed)</td><td class="num">1</td><td>P6</td><td>Vivid framing of review failure</td></tr><tr><td>"a system prompt with a subscription"</td><td class="num">1</td><td>P6</td><td>Power-user prior against AI wrappers</td></tr></tbody></table></div>
+<p>Caveat on 3b. Phrase repetition partly reflects a shared generator (all 10 personas were written by the same AI). Real users will use different, messier language. This list is a starting vocabulary to listen for, not evidence of market language.</p>
+<h3 id="3c-the-single-biggest-unmet-need">3c. The single biggest unmet need</h3>
+<p class="need">“Tell me what to work on tonight, based on an accurate record of what I got wrong and what I'm forgetting, without me having to maintain that record.”</p>
+<div class="kpis"><div class="kpi"><div class="k">Direct match</div><div class="kv">6/10</div><div class="s">P1, P3, P4, P6, P9, P10</div></div>
+<div class="kpi"><div class="k">Adjacent</div><div class="kv">3/10</div><div class="s">P2, P5, P7</div></div>
+<div class="kpi"><div class="k">Different need</div><div class="kv">1/10</div><div class="s">P8</div></div></div>
+<p>Biggest unmet need, stated precisely: "Tell me what to work on tonight, based on an accurate record of what I got wrong and what I'm forgetting, without me having to maintain that record."</p>
+<p>This need has three parts, and each is backed by evidence:</p>
+<ul>
+<li>Part 1. An automatic, persistent record of my own mistakes and decay. Manual tracking failed for almost everyone who tried it:
+<ul>
+<li>P1 spends about 40 min/day on Notion upkeep, which she resents.
+</li>
+<li>P2 stopped updating his plan in June and has reviewed his 错题本 (error notebook) about 3 times.
+</li>
+<li>P3's Excel plan is "usually three days out of date"; she has done 4-5 "delete and re-plan" resets this year.
+</li>
+<li>P6's vault is a "graveyard".
+</li>
+<li>P7: "If it's not automatic, I won't keep it up."
+</li>
+<li>P10 logs about half of her missed questions and has 200+ unsearchable ChatGPT threads.
+</li></ul>
+</li>
+<li>Part 2. Turned into a next action, not a dashboard:
+<ul>
+<li>P9: "knowing immediately which weak topic to spend tonight's 40 minutes on, with the right problems ready."
+</li>
+<li>P7: "gave me tonight's one task."
+</li>
+<li>P10: "remember all my mistakes and tell me what to do tonight."
+</li>
+<li>P4: "Knowing exactly what from 民法 is leaking out and making me review that and only that, at the right time."
+</li></ul>
+</li>
+<li>Part 3. Accurate enough to trust. 7 of 10 have a one-strike rule on errors, so a wrong recommendation or fact destroys the value.
+</li></ul>
+<p>C2 pick map (the one problem each persona would pay to remove):</p>
+<div class="tbl"><table><thead><tr><th>Persona</th><th>C2 problem picked</th><th>Matches biggest unmet need?</th></tr></thead><tbody><tr><td>P1</td><td>Context and record-keeping (re-explaining to AI, 40 min of Notion)</td><td>Direct</td></tr><tr><td>P2</td><td>Noticing when he disappears from a subject and pulling him back</td><td>Adjacent (memory-driven, specific nudge)</td></tr><tr><td>P3</td><td>"where was I, and what should I do next across all my projects"</td><td>Direct</td></tr><tr><td>P4</td><td>Forgetting: what from 民法 is leaking, reviewed at the right time</td><td>Direct</td></tr><tr><td>P5</td><td>Passing 高数: "these are the problem types, do these ten"</td><td>Adjacent (prioritization from her own materials)</td></tr><tr><td>P6</td><td>Resurfacing his own notes and past mistakes at the right time</td><td>Direct</td></tr><tr><td>P7</td><td>Fast, strict 申论 feedback (plus recurring weaknesses and tonight's task)</td><td>Adjacent (feedback job)</td></tr><tr><td>P8</td><td>Anki card-making with a page citation per card</td><td>Different (content conversion)</td></tr><tr><td>P9</td><td>Knowing which weak topic to spend tonight's 40 minutes on</td><td>Direct</td></tr><tr><td>P10</td><td>"remember all my mistakes and tell me what to do tonight"</td><td>Direct</td></tr></tbody></table></div>
+<p>Result: 6 of 10 direct, 3 of 10 adjacent, 1 of 10 different.</p>
+<p>Why this matters for Zero: of Zero's four pillars, persistent memory plus document grounding already come closest to this need. Scaffolding and generic push do not serve it and, per sections 2a and 2c, actively repel users.</p>
+<h3 id="3d-surprises-and-contradictions-versus-the-founder-s-deck-narrative">3d. Surprises and contradictions versus the founder's deck narrative</h3>
+<p>Contradictions between the synthetic findings and the founder's deck (all require real-user validation):</p>
+<ol>
+<li>"陪伴" (companionship) and "没法开始 / 走不远" (can't start, can't keep going) positioning versus a prioritization pain. The deck frames the core problem as starting and persisting. Only 2 of 10 personas agree (P2, P5), and they are the two with the lowest ability to pay (¥30 and ¥0). Most personas "show up" but do not know what to work on.
+</li>
+<li>Scaffolding as a differentiator versus scaffolding as a churn trigger. The deck's quote "它让我自己想明白" ("it lets me figure it out myself") suggests learners value guided discovery. In the simulation, 9 of 10 said withholding answers sends them back to free AI. P5 reports leaving a guided app after one session because it "made me feel stupid". The preferred form of active learning is answer first, then self-testing (Anki, drills, generated questions), under the learner's control.
+</li>
+<li>Push as retention versus push as mute. The deck cites User B and U17 on proactive outreach. All 10 synthetic personas had a past record of muting or abandoning check-ins, including a paid ¥299 督学 service (P2) and paid-course 班主任 (class coordinator) messages (P1, P3, P9). The only outreach anyone asked for was hyper-specific: naming the skipped subject, the recurring error or the forgetting risk.
+</li>
+<li>The memory moat versus memory as a feature. The deck's 96% "external memory" figure comes from retained users (survivorship). In the simulation, memory is the most valued element but never the reason someone came back. Deadlines, guilt, peers and sunk-cost commitments (paid classes, the 自习室 fee) drive return.
+</li>
+<li>ARPU ¥78.9 versus a ¥30 median. Stated WTP clusters at ¥30-39 and is mostly a substitution for ChatGPT Plus. The Pro tier is supported only where Zero would replace a paid line item. Competing for the ChatGPT or 批改 budget, not new budget, is the real pricing game.
+</li>
+<li>Trust, not price, blocks the high-budget segments. P4 (¥12,800 course) and P9 (¥19,800 class plus a ¥400/h tutor) both call ¥99 trivial and both pay ¥0. The path in is endorsement by their human authority (teacher, tutor) and zero factual errors, not a discount.
+</li>
+<li>The upload barrier is often effort and format, not privacy. P5 has only camera-roll photos, P7 and P9 will not scan, P8's e-books are DRM-locked, and P4 will not photograph 800 pages. The deck's 58.7% upload rate among returning users may exclude exactly these people.
+</li>
+<li>Fragmentation is about silos, not switching. Most personas are "used to" switching. The pain is that errors and progress are spread across 3-4 places that "don't talk to each other", plus universal copy-paste. That favors integrations and export (Anki, Notion, Obsidian, UWorld, 粉笔) over an all-in-one replacement.
+</li>
+<li>The overseas persona looks like the best domestic early adopter. P10's need and objections closely mirror P1's. This suggests the 出海 (overseas expansion) track may not need a different core product, but it adds stricter data-ownership, integration and community-proof requirements. With n = 1, this is a hypothesis only.
+</li>
+<li>The supervision paradox. The persona who most needs accountability (P2) has the lowest budget, the worst setup tolerance and a documented history of churning from a paid supervision product.
+</li></ol>
+<h2 id="4-segment-implications">4. Segment implications</h2>
+<p>Segment fit assessment across the 10 synthetic personas. It is based on need fit, feature fit, WTP and adoption barriers.</p>
+<div class="tbl"><table><thead><tr><th>Persona</th><th>Segment</th><th>Fit</th><th>Why</th></tr></thead><tbody><tr><td>P1 Lin Zihan</td><td>Pharmacy 考研 power user</td><td>Beachhead (strongest)</td><td>Already pays ¥68/mo for AI; PDFs ready; high referral (runs a 40-person group); need is exactly memory plus grounding; rejects scaffolding and push; needs Anki and Notion export and accuracy on structures and tables</td></tr><tr><td>P10 Sofia Martinez</td><td>US MCAT post-bacc</td><td>Beachhead candidate (overseas)</td><td>Same need pattern as P1; pays $20/mo for ChatGPT; needs UWorld and Anki integration, data deletion and r/MCAT proof; substitution-only pricing</td></tr><tr><td>P3 Chen Siqi</td><td>MPAcc multi-project (thesis + CPA)</td><td>Secondary / conditional</td><td>Clear "where was I" pain across projects; ¥39 if it replaces ChatGPT Plus with zero setup; thesis upload caution; adoption only via cohort peers</td></tr><tr><td>P7 Huang Yutong</td><td>Working professional, 国考</td><td>Adjacent segment with high WTP</td><td>Highest willingness to spend (¥60-99), but for strict 申论 grading, which is a different core job; phone-only; will not leave 粉笔</td></tr><tr><td>P4 Wang Hao</td><td>Full-time 法考</td><td>Later / off-season opportunity</td><td>Strong forgetting-and-resurfacing need with high budget, but trust-gated, locked to his course structure, and ¥0 during peak season; possible entry through retake years and 讲义-aligned review</td></tr><tr><td>P6 Zhang Wei</td><td>985 CS top student</td><td>Poor paying fit (possible free-tier tester)</td><td>Mistake-resurfacing need matches, but he rejects scaffolding and push, prices at API cost, builds his own tools, and has low consumer referral</td></tr><tr><td>P2 Zhao Mingyuan</td><td>二战考研, low budget</td><td>Need fit, poor economic fit</td><td>Only persona for whom specific outreach is the core value; ¥30 ceiling; churned from paid 督学; low setup tolerance</td></tr><tr><td>P8 Zhou Xinran</td><td>Clinical medicine</td><td>Poor fit as specified</td><td>Memory already solved by Anki; will not upload 内部资料 slides; wants cited card generation (a separate wedge); ¥30 only for that</td></tr><tr><td>P9 Sun Jianguo</td><td>MBA 联考, high budget</td><td>Poor fit</td><td>Trusts humans only; pays ¥0 for software; possible only as a tutor-facing tool</td></tr><tr><td>P5 Liu Jiayi</td><td>二本 sophomore crammer</td><td>Poor fit</td><td>Seasonal crammer; ¥0-15; no PDFs; wants answers fast; rejects scaffolding; free-tier dorm virality at best</td></tr></tbody></table></div>
+<p>Beachhead hypothesis (to test with real users): self-driven, AI-heavy candidates for a high-stakes exam, 3 to 6 months out, who:</p>
+<ol>
+<li>already pay for a general AI tool (ChatGPT Plus or equivalent);
+</li>
+<li>have their materials in digital form (PDF);
+</li>
+<li>have already built a manual tracking system (Notion, Sheets, Anki) that they resent maintaining.
+</li></ol>
+<p>In this simulation that is P1 and P10, with P3 as a near neighbor. What Zero must sell to them:</p>
+<ul>
+<li>Replace ChatGPT for studying, plus automatic error memory and a "tonight" plan.
+</li>
+<li>Answer first by default, with optional self-testing.
+</li>
+<li>Export to Anki and Notion.
+</li>
+<li>Cited, accurate grounding.
+</li>
+<li>Push only when it is specific.
+</li></ul>
+<p>Poor-fit pattern: learners who are trust-gated by a human authority (P4, P9), learners with no digital materials or budget (P5), and power users who build their own tools (P6). The segment the deck emphasizes for 陪伴 (companionship) and supervision (P2, like the deck's User B) has real need but weak economics and a history of churn.</p>
+<h2 id="5-open-questions-that-only-real-human-interviews-can-answer">5. Open questions that only real human interviews can answer</h2>
+<p>Open questions for real-user validation (synthetic personas cannot answer these reliably):</p>
+<ol>
+<li>Actual payment behavior. Do real users who say ¥30-68 actually convert at those prices, and what share cancels ChatGPT Plus rather than stacking subscriptions? Test with real checkout or pre-sale, not stated WTP.
+</li>
+<li>The return driver. Among Zero's actual 63.5% returners, how much of return timing follows exam dates and deadlines, and how much follows Zero's memory or push? Needs cohort data aligned to exam calendars, plus retrospective interviews with churned users, not only retained ones.
+</li>
+<li>Specific push. Does a hyper-specific, data-aware nudge ("4 days since OS; last stuck on PV operations") actually change behavior, or is it muted like everything else? No persona has experienced one. It needs a live experiment.
+</li>
+<li>Scaffolding in practice. Do real Zero users who praise "它让我自己想明白" ("it lets me figure it out myself") use step-by-step mode voluntarily, and does answer-first-then-quiz perform as well or better on retention and conversion? An A/B test of the default mode is needed.
+</li>
+<li>Tolerance for accuracy failures. What error rate do real users tolerate before abandoning, and does source-page citation change that threshold?
+</li>
+<li>Upload norms. How do real students and schools treat "内部资料" (internal) slides, watermarked course 讲义 (handouts) and paid question banks? Would school or teacher endorsement unlock uploads? How much of the non-upload group is blocked by format (phone photos, DRM) rather than policy?
+</li>
+<li>Seasonality economics. What is real lifetime value per exam cycle, and do users return for the next exam (for example CPA subject 2, or a 考研 retake)?
+</li>
+<li>Trust transfer. Can a human authority (tutor, 助教 teaching assistant, 班主任 class coordinator, senior student) endorse or oversee Zero well enough to unlock the high-budget, trust-gated segments (P4, P9-type)?
+</li>
+<li>Overseas. Do real overseas learners (beyond one MCAT persona) share the need? What do data-ownership and integration expectations (UWorld, Anki, AnKing) cost to meet?
+</li>
+<li>Real language. What words do real users use for the "what should I do tonight" problem? The phrase list in 3b comes from a single generator and must be replaced with real verbatims.
+</li>
+<li>Who actually pays. For students funded by their parents (P2, P5), who is the real buyer? Would parents pay for the specific-accountability version?
+</li>
+<li>Adjacent jobs. Is strict AI essay grading (申论, 主观题 written answers) or cited flashcard generation a better wedge than general tutoring for specific exam segments?
+</li></ol>
+<h2 id="appendix-machine-readable-data">Appendix: machine-readable data</h2>
+<p>Machine-readable dataset for charts (n = 10 synthetic personas; scores V/P/I; amounts in RMB/month; USD converted at 7.2).</p>
+<details class="raw"><summary>Machine-readable data (JSON)</summary><pre>{
+  "meta": {
+    "study": "Zero synthetic user research",
+    "n": 10,
+    "synthetic": true,
+    "disclaimer": "Synthetic AI personas; exploratory only; must be validated with real human interviews; cannot predict real purchasing behavior.",
+    "score_codes": {"V": "Validated", "P": "Partially validated", "I": "Invalidated"},
+    "verdict_rule": "Validated if V&gt;=6; Invalidated if I&gt;=6 or (V=0 and I&gt;=5); otherwise Partially Validated",
+    "usd_to_rmb": 7.2,
+    "baseline": {"arpu_rmb": 78.9, "paid_conversion_pct": 4.6, "tiers_rmb": [0, 39, 99, 199]}
+  },
+  "personas": [
+    {"id": "P1", "name": "Lin Zihan"},
+    {"id": "P2", "name": "Zhao Mingyuan"},
+    {"id": "P3", "name": "Chen Siqi"},
+    {"id": "P4", "name": "Wang Hao"},
+    {"id": "P5", "name": "Liu Jiayi"},
+    {"id": "P6", "name": "Zhang Wei"},
+    {"id": "P7", "name": "Huang Yutong"},
+    {"id": "P8", "name": "Zhou Xinran"},
+    {"id": "P9", "name": "Sun Jianguo"},
+    {"id": "P10", "name": "Sofia Martinez"}
+  ],
+  "assumptions": [
+    {
+      "id": "A1",
+      "name": "Persistent cross-session memory drives multi-day return",
+      "scores": {"P1": "P", "P2": "P", "P3": "P", "P4": "P", "P5": "I", "P6": "P", "P7": "P", "P8": "I", "P9": "I", "P10": "P"},
+      "counts": {"V": 0, "P": 7, "I": 3},
+      "verdict": "Partially Validated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A2",
+      "name": "Will pay ¥15-40 entry and a meaningful share ¥99+ Pro for private-document tutoring",
+      "scores": {"P1": "V", "P2": "P", "P3": "P", "P4": "I", "P5": "I", "P6": "P", "P7": "V", "P8": "P", "P9": "I", "P10": "P"},
+      "counts": {"V": 2, "P": 5, "I": 3},
+      "verdict": "Partially Validated",
+      "confidence": "Low"
+    },
+    {
+      "id": "A3",
+      "name": "Prefer proactive guidance/scaffolding over instant raw answers",
+      "scores": {"P1": "I", "P2": "P", "P3": "P", "P4": "I", "P5": "I", "P6": "I", "P7": "I", "P8": "P", "P9": "I", "P10": "I"},
+      "counts": {"V": 0, "P": 3, "I": 7},
+      "verdict": "Invalidated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A4",
+      "name": "Tool fragmentation causes cognitive fatigue learners want solved",
+      "scores": {"P1": "V", "P2": "I", "P3": "V", "P4": "P", "P5": "I", "P6": "I", "P7": "P", "P8": "P", "P9": "I", "P10": "P"},
+      "counts": {"V": 2, "P": 4, "I": 4},
+      "verdict": "Partially Validated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A5",
+      "name": "Proactive outreach is welcomed, not annoying",
+      "scores": {"P1": "P", "P2": "P", "P3": "P", "P4": "P", "P5": "I", "P6": "I", "P7": "I", "P8": "I", "P9": "I", "P10": "P"},
+      "counts": {"V": 0, "P": 5, "I": 5},
+      "verdict": "Invalidated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A6",
+      "name": "Willing to upload private/copyrighted course materials",
+      "scores": {"P1": "V", "P2": "V", "P3": "P", "P4": "I", "P5": "P", "P6": "V", "P7": "P", "P8": "I", "P9": "I", "P10": "P"},
+      "counts": {"V": 3, "P": 4, "I": 3},
+      "verdict": "Partially Validated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A7",
+      "name": "Primary pain is starting and persisting, not content or explanations",
+      "scores": {"P1": "I", "P2": "V", "P3": "P", "P4": "I", "P5": "V", "P6": "P", "P7": "I", "P8": "I", "P9": "I", "P10": "I"},
+      "counts": {"V": 2, "P": 2, "I": 6},
+      "verdict": "Invalidated",
+      "confidence": "Med"
+    },
+    {
+      "id": "A8",
+      "name": "Overseas English-speaking learners share the same need and would adopt the same product",
+      "scoring_note": "P10 scored on own need and adoption; P1-P9 scored on whether their core need matches P10's pattern (mistake memory + tonight's priority, answer-first, alongside existing tools).",
+      "scores": {"P1": "V", "P2": "P", "P3": "P", "P4": "V", "P5": "I", "P6": "V", "P7": "V", "P8": "I", "P9": "V", "P10": "P"},
+      "counts": {"V": 5, "P": 3, "I": 2},
+      "verdict": "Partially Validated",
+      "confidence": "Low"
+    }
+  ],
+  "wtp": [
+    {"persona": "P1", "amount_rmb": 68, "ceiling_rmb": 99, "conditions": "Replaces shared ChatGPT Plus; ¥99 ceiling only if it also replaces most Notion upkeep and is accurate on pharmacology; 1-week free trial; stops after December exam", "bucket": "¥50-99", "seasonal": true},
+    {"persona": "P2", "amount_rmb": 30, "ceiling_rmb": 30, "conditions": "Hard ceiling; free trial; no annual prepay; outreach must be specific; would not pay ¥99", "bucket": "¥30-49", "seasonal": false},
+    {"persona": "P3", "amount_rmb": 39, "ceiling_rmb": 39, "conditions": "Free trial that works in first session with no setup; must replace on-and-off ChatGPT Plus; ¥99 not affordable as student", "bucket": "¥30-49", "seasonal": false},
+    {"persona": "P4", "amount_rmb": 0, "ceiling_rmb": 39, "conditions": "¥0 now (3 weeks to exam); hypothetical ¥39 only June-October of a retake year if proven by passers and error-free on 厚大 讲义", "bucket": "¥0", "seasonal": true},
+    {"persona": "P5", "amount_rmb": 0, "ceiling_rmb": 15, "conditions": "¥0 during semester; ~¥15 one-off in finals month only; prefers free version roommates use", "bucket": "¥0", "seasonal": true},
+    {"persona": "P6", "amount_rmb": 20, "ceiling_rmb": 20, "conditions": "About the cost of API calls; requires Obsidian Markdown read/write and export/API; ¥0 if it requires leaving Obsidian; only 2-3 months around finals", "bucket": "¥1-29", "seasonal": true},
+    {"persona": "P7", "amount_rmb": 60, "ceiling_rmb": 99, "conditions": "Strict, fast 申论 feedback; ¥99 only if it fully replaces human 批改 after proof vs teacher; phone-only; ~3 months until exam; no annual plan", "bucket": "¥50-99", "seasonal": true},
+    {"persona": "P8", "amount_rmb": 30, "ceiling_rmb": 30, "conditions": "Only for Anki card generation with source-page citation per card; ¥0 for concept as described; needs senior/teacher endorsement; ≥¥50 she keeps making cards herself", "bucket": "¥30-49", "seasonal": false},
+    {"persona": "P9", "amount_rmb": 0, "ceiling_rmb": 0, "conditions": "¥0 for software due to trust; would add ~¥1,600/month to human tutor instead; might try free if tutor or admitted colleagues endorse", "bucket": "¥0", "seasonal": false},
+    {"persona": "P10", "amount_rmb": 144, "ceiling_rmb": 144, "incremental_amount_rmb": 0, "conditions": "$20 only as replacement for ChatGPT Plus; $0 incremental (maybe $10 for 3 months pre-test); needs r/MCAT proof, UWorld/Anki integration, data ownership/deletion", "bucket": "¥99+", "seasonal": true}
+  ],
+  "wtp_summary": {
+    "mean_rmb": 39.1,
+    "median_rmb": 30,
+    "mean_rmb_p10_incremental": 24.7,
+    "median_rmb_p10_incremental": 25,
+    "buckets": [
+      {"bucket": "¥0", "count": 3, "pct": 30},
+      {"bucket": "¥1-29", "count": 1, "pct": 10},
+      {"bucket": "¥30-49", "count": 3, "pct": 30},
+      {"bucket": "¥50-99", "count": 2, "pct": 20},
+      {"bucket": "¥99+", "count": 1, "pct": 10}
+    ],
+    "pay_39_unconditionally": 0,
+    "stated_39_plus_with_conditions": 4,
+    "pay_99_conditionally": 3,
+    "pay_99_conditionally_personas": ["P1", "P7", "P10"],
+    "explicitly_seasonal": 6
+  },
+  "objections": [
+    {"text": "Generic reminders/push will be muted", "count": 10, "personas": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10"]},
+    {"text": "Withholding answers / Socratic guidance means going back to free AI", "count": 9, "personas": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P9", "P10"]},
+    {"text": "One factual error means deleting it (accuracy/trust gate)", "count": 7, "personas": ["P1", "P3", "P4", "P7", "P8", "P9", "P10"]},
+    {"text": "Setup/upload effort too high (PDF, scanning, desktop, &gt;5-10 min)", "count": 6, "personas": ["P2", "P3", "P4", "P5", "P7", "P9"]},
+    {"text": "Must export to or integrate with existing system, not replace it", "count": 6, "personas": ["P1", "P4", "P6", "P7", "P8", "P10"]},
+    {"text": "Needs a free trial before paying", "count": 6, "personas": ["P1", "P2", "P3", "P6", "P9", "P10"]},
+    {"text": "Need ends at exam; no annual/off-season payment", "count": 6, "personas": ["P1", "P4", "P5", "P6", "P7", "P10"]},
+    {"text": "Must replace existing spend, not be an additional subscription", "count": 5, "personas": ["P1", "P3", "P4", "P7", "P10"]},
+    {"text": "Data privacy/copyright/ownership of uploads", "count": 5, "personas": ["P3", "P4", "P6", "P8", "P10"]},
+    {"text": "Requires trusted peer or expert endorsement first", "count": 5, "personas": ["P3", "P4", "P8", "P9", "P10"]},
+    {"text": "Price above free-alternative ceiling", "count": 5, "personas": ["P2", "P3", "P5", "P6", "P8"]},
+    {"text": "Will not switch systems close to exam", "count": 2, "personas": ["P4", "P7"]},
+    {"text": "Feels like a gimmick / built for teenagers", "count": 2, "personas": ["P6", "P10"]},
+    {"text": "Content-specific handling gaps (structures/tables; multi-project)", "count": 2, "personas": ["P1", "P3"]}
+  ],
+  "phrases": [
+    {"phrase": "copy / paste", "count": 10},
+    {"phrase": "mute / turn off / swipe away / ignore", "count": 9},
+    {"phrase": "trust / don't trust", "count": 9},
+    {"phrase": "the answer", "count": 8},
+    {"phrase": "specific", "count": 8},
+    {"phrase": "annoying / annoy", "count": 8},
+    {"phrase": "waste / wasted", "count": 7},
+    {"phrase": "打卡", "count": 7},
+    {"phrase": "what should I do / what's next / tonight", "count": 7},
+    {"phrase": "generic", "count": 6},
+    {"phrase": "replace", "count": 6},
+    {"phrase": "free trial / free tier", "count": 6},
+    {"phrase": "delete it / I'm gone / I'm done", "count": 6},
+    {"phrase": "go back to ChatGPT / 豆包", "count": 5},
+    {"phrase": "tired", "count": 5},
+    {"phrase": "in my head", "count": 4},
+    {"phrase": "guilt", "count": 4},
+    {"phrase": "performative / performing studying", "count": 3},
+    {"phrase": "Socratic", "count": 3},
+    {"phrase": "graveyard", "count": 1},
+    {"phrase": "a system prompt with a subscription", "count": 1}
+  ],
+  "biggest_unmet_need": {
+    "statement": "Tell me what to work on tonight, based on an accurate record of what I got wrong and what I'm forgetting, without me having to maintain that record.",
+    "direct_match": ["P1", "P3", "P4", "P6", "P9", "P10"],
+    "adjacent_match": ["P2", "P5", "P7"],
+    "different": ["P8"]
+  }
+}</pre></details>
+<footer>Synthetic AI research — an exploratory simulation for refining hypotheses and scripts. All findings must be validated through primary interviews with real human end users. Generated for Zero (观界未来) · Disciplined Entrepreneurship framework.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  document.addEventListener('mousemove',function(e){
+    var t=e.target.closest('[data-tip]');
+    if(!t){tip.style.opacity=0;return;}
+    tip.textContent=t.getAttribute('data-tip');
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+290>innerWidth)x=e.clientX-290;
+    tip.style.left=x+'px';tip.style.top=y+'px';tip.style.opacity=1;
+  });
+  var b=document.querySelector('.theme-toggle'),r=document.documentElement;
+  function cur(){return r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+  try{var s=localStorage.getItem('zero-theme');if(s)r.setAttribute('data-theme',s);}catch(e){}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('zero-theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>
