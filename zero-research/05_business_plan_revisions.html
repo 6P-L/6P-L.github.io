@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero Plan Revisions</title>
+<meta name="description" content="Recommended revisions to Zero&#x27;s end user profile, persona, value proposition and business plan.">
+<style>
+:root{
+  --page:#f3eee4; --surface:#fbf8f2; --surface-2:#f1ebdf; --ink:#1c1a17; --ink-2:#55504a; --muted:#8a847b;
+  --line:#e2dbcc; --accent:#b8482a; --accent-soft:#f3dfd5; --code:#efe8da;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --warn-ink:#8a5a00; --crit:#d03b3b; --crit-ink:#a42626;
+  --bar:#2a78d6; --bar-2:#86b6ef; --ring:rgba(28,26,23,.10);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+    --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+    --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+  --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+  --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 16px 96px}
+header.hero{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:28px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.brand{font:600 15px/1 Georgia,"Songti SC",serif;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+h1{font:600 clamp(28px,4.4vw,44px)/1.15 Georgia,"Songti SC",serif;margin:.35em 0 .3em;letter-spacing:-.01em}
+h2{font:600 clamp(22px,3vw,28px)/1.25 Georgia,"Songti SC",serif;margin:2.2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:18px;line-height:1.35;margin:1.8em 0 .5em}
+h4{font-size:16px;margin:1.4em 0 .4em;color:var(--ink-2)}
+p,li{color:var(--ink)}
+.lede{color:var(--ink-2);font-size:17px;max-width:760px}
+a{color:var(--accent)}
+strong{font-weight:650}
+code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+ul,ol{padding-left:1.3em}
+li{margin:.25em 0}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:24px 0;font-size:14px}
+nav.toc b{display:block;font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+nav.toc a{color:var(--ink-2);text-decoration:none;display:inline-block;margin:2px 14px 2px 0}
+nav.toc a:hover{color:var(--accent)}
+.tbl{overflow-x:auto;margin:14px 0 18px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--ink-2);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.warnbox{background:var(--accent-soft);border:1px solid var(--accent);border-left-width:5px;border-radius:10px;padding:14px 18px;margin:18px 0}
+.warnbox h2,.warnbox h3{margin-top:0;border:0;padding:0}
+.callout{border-radius:10px;padding:12px 16px;margin:10px 0;border:1px solid var(--line);background:var(--surface)}
+.callout .lbl{display:block;font:600 11px/1.4 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.callout p{margin:.25em 0}
+.callout.syn{border-left:4px solid var(--bar)} .callout.syn .lbl{color:var(--bar)}
+.callout.val{border-left:4px solid var(--accent)} .callout.val .lbl{color:var(--accent)}
+.callout.probe{border-left:4px solid var(--muted)} .callout.probe .lbl{color:var(--muted)}
+.callout.rec{border-left:4px solid var(--good)} .callout.rec .lbl{color:var(--good-ink)}
+.callout.why{border-left:4px solid var(--warn)} .callout.why .lbl{color:var(--warn-ink)}
+.callout.test{border-left:4px solid var(--accent)} .callout.test .lbl{color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 system-ui,sans-serif;padding:4px 8px;border-radius:999px;white-space:nowrap;max-width:100%;border:1px solid transparent}
+.badge.v{color:var(--good-ink);background:color-mix(in srgb,var(--good) 14%,transparent);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.badge.p{color:var(--warn-ink);background:color-mix(in srgb,var(--warn) 18%,transparent);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.badge.i{color:var(--crit-ink);background:color-mix(in srgb,var(--crit) 13%,transparent);border-color:color-mix(in srgb,var(--crit) 40%,transparent)}
+.badge.n{color:var(--ink-2);background:var(--surface-2);border-color:var(--line)}
+.matrix td,.matrix th{text-align:center}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.kpi .kv{font:600 30px/1.1 Georgia,serif;margin:6px 0 2px}
+.kpi .s{font-size:13px;color:var(--ink-2)}
+.kpi .s .badge{white-space:normal}
+.kpi{min-width:0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 12px;margin:16px 0 22px}
+.chart h4{margin:0 0 4px;color:var(--ink)}
+.chart .sub{font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-2);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.row{display:grid;grid-template-columns:minmax(120px,260px) 1fr 104px;gap:12px;align-items:center;margin:8px 0;font-size:14px}
+.row .lab{color:var(--ink);line-height:1.3}
+.row .lab small{display:block;color:var(--muted);font-size:12px}
+.row .val{font-variant-numeric:tabular-nums;color:var(--ink-2);text-align:right;white-space:nowrap}
+.track{height:18px;background:var(--surface-2);border-radius:4px;display:flex;gap:2px;overflow:hidden}
+.seg{height:100%;border-radius:4px;min-width:0;cursor:default;transition:filter .12s}
+.seg:hover{filter:brightness(1.1)}
+.seg.v{background:var(--good)} .seg.p{background:var(--warn)} .seg.i{background:var(--crit)}
+.seg.b{background:var(--bar)} .seg.b2{background:var(--bar-2)}
+.vbars{display:flex;align-items:flex-end;gap:10px;height:190px;padding:0 4px;border-bottom:1px solid var(--line)}
+.vcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.vcol .bar{width:100%;max-width:64px;background:var(--bar);border-radius:4px 4px 0 0}
+.vcol .n{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.vlabels{display:flex;gap:10px;padding:6px 4px 0}
+.vlabels div{flex:1;text-align:center;font-size:12px;color:var(--muted);line-height:1.3}
+.refline{position:relative}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.twocol{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row .val{text-align:left}}
+details.raw{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.raw summary{cursor:pointer;padding:10px 14px;font-weight:600}
+details.raw pre{margin:0;padding:14px;overflow:auto;max-height:420px;font:12px/1.5 ui-monospace,monospace;background:var(--code);border-radius:0 0 10px 10px}
+.need{font:500 clamp(19px,2.4vw,24px)/1.4 Georgia,"Songti SC",serif;border-left:4px solid var(--accent);padding:6px 0 6px 16px;margin:14px 0}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--ink);color:var(--page);font-size:12px;line-height:1.4;padding:6px 9px;border-radius:6px;max-width:280px;opacity:0;transition:opacity .08s}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.theme-toggle{position:absolute;top:12px;right:16px;background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;z-index:5}
+@media print{.theme-toggle,nav.toc{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" type="button" aria-label="Toggle light or dark theme">◐ Theme</button>
+<div class="wrap">
+<header class="hero">
+<div class="brand"><i></i>Zero · Synthetic Research</div>
+<div class="eyebrow">Step 7 · 24 Steps of Disciplined Entrepreneurship</div>
+<h1>Zero Recommended Business Plan Revisions</h1><p class="lede">Strategic revisions to the End User Profile, Persona, Value Proposition and Business Plan, drawn from the synthetic study's most consistent findings. Organized step by step along Bill Aulet's 24 Steps of Disciplined Entrepreneurship.</p>
+</header>
+<nav class="toc"><b>Contents</b><a href="#summary-of-the-four-headline-revisions">Summary of the four headline revisions</a><a href="#phase-1-who-is-your-customer">Phase 1: Who is your customer?</a><a href="#phase-2-what-can-you-do-for-your-customer">Phase 2: What can you do for your customer?</a><a href="#phase-3-how-does-your-customer-acquire-your-product">Phase 3: How does your customer acquire your product?</a><a href="#phase-4-how-do-you-make-money-off-your-product">Phase 4: How do you make money off your product?</a><a href="#phase-5-how-do-you-design-and-build-your-business">Phase 5: How do you design and build your business?</a><a href="#what-not-to-change-yet">What not to change yet</a></nav>
+<div class="warnbox"><strong>Important.</strong> These recommendations rest on 10 synthetic personas. "Confidence" is relative within this simulation, not a measure of market certainty. Treat each recommendation as a hypothesis with a named validation test, and act on it only after real interviews (see the Step 6 script) and live experiments confirm it.</div>
+<h2 id="summary-of-the-four-headline-revisions">Summary of the four headline revisions</h2>
+<div class="tbl"><table><thead><tr><th>Element</th><th>Current (deck, May 2026)</th><th>Recommended revision</th><th>Confidence</th></tr></thead><tbody><tr><td>End User Profile</td><td>All 在校大学生 plus 考研/考公/法考 learners who "can't start, can't keep going"</td><td>Self-driven, AI-heavy exam candidates 1–6 months out, who already pay for a general AI, have digital materials and resent maintaining a manual tracking system</td><td>Med</td></tr><tr><td>Persona</td><td>User B (weak foundation, needs a supervisor) as the emotional anchor</td><td>P1-type pharmacy 考研 power user: already studying 8–10 h a day, loses about 1 h a day to re-orienting and Notion upkeep, and pays ¥68/mo for ChatGPT</td><td>Med</td></tr><tr><td>Value Proposition</td><td>陪伴 companionship: "helps you start, persist and manage", with scaffolding and push</td><td>"Know exactly what to study tonight. Zero remembers every mistake and everything you're forgetting, from your own materials, with no upkeep." Answer-first, cited, and exports to Anki and Notion</td><td>Med</td></tr><tr><td>Business Plan</td><td>¥39/¥99/¥199 monthly tiers; ARPU ¥78.9; LTV ¥473 over 6 months</td><td>Exam-cycle pricing; Pro positioned as a ChatGPT Plus replacement; planning ARPU ≈ ¥40–60; LTV modeled per exam cycle; plan for post-exam churn</td><td>Low–Med</td></tr></tbody></table></div>
+<h2 id="phase-1-who-is-your-customer">Phase 1: Who is your customer?</h2>
+<h3 id="step-1-market-segmentation">Step 1. Market segmentation</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Segment by learner behavior and trust source, not by exam type. There are four cells: (a) AI-heavy self-directed learners, (b) learners juggling several projects, (c) low-budget learners who need accountability, (d) trust-gated learners anchored on a human course or tutor. Exam type (考研, 法考, 国考, CET, MBA, MCAT) becomes a second dimension.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Needs, objections and WTP clustered by behavior rather than by exam. P1 (考研) and P10 (MCAT) are near-identical. P4 (法考) and P9 (MBA) share a trust gate despite different exams.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>In real interviews, check whether segment-level WTP and feature preferences differ more by behavior cell than by exam type.</p></div>
+<h3 id="step-2-select-a-beachhead-market">Step 2. Select a beachhead market</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Beachhead: professional-course 考研 candidates (pharmacy, medicine-adjacent, 408 CS) 3–6 months before the exam who already pay for a general AI tool and study from PDFs. Deprioritize the low-budget supervision segment (User B type) and the trust-gated high-budget segments (法考 full-course, MBA) for now.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>P1 is the strongest fit: she already pays ¥68/mo, her need is exactly memory plus grounding, and she runs a 40-person referral group. The supervision segment has real need but a ¥0–30 ceiling and a history of churn. P4 and P9 pay ¥0 because of trust, not price.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Recruit 10 real candidates matching the beachhead criteria. At least 4 should accept the Step 6 C3 paid-pilot offer.</p></div>
+<h3 id="step-3-build-an-end-user-profile">Step 3. Build an End User Profile</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Rewrite the profile as: age 21–26; 1–6 months before a high-stakes exam; studies 6–10 h a day; already pays ¥40–70/mo for a general AI or keeps a shared account; materials are PDFs; keeps a hand-built tracker (Notion, Sheets, Anki) that is stale or resented; decides alone; finds tools on 小红书 and in cohort WeChat groups; trusts nothing until it is accurate on their own subject.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>6 of 10 personas named a need matching this profile directly. Every persona who tracked by hand let it go stale.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Screen-share the artifacts (Step 6, W3) of 15 real users to confirm the "stale tracker" trait.</p></div>
+<h3 id="step-4-calculate-the-tam-for-the-beachhead-market">Step 4. Calculate the TAM for the beachhead market</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Size the beachhead bottom-up and treat the result as an estimate to validate. 考研 registrants ≈ 3.4M/yr (deck). If 10–20% already pay for AI and study from PDFs, that is ≈ 340k–680k learners. At ¥45/mo × 4–5 paying months ≈ ¥200/learner per cycle, the TAM is ≈ ¥68M–136M per year.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Synthetic WTP median ¥30, mean ¥39; beachhead personas at ¥60–68; 6 of 10 pay only seasonally.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Survey 200+ 考研 candidates (e.g. via 小红书) on current AI spend and material format to replace the 10–20% placeholder.</p></div>
+<h3 id="step-5-profile-the-persona-for-the-beachhead-market">Step 5. Profile the Persona for the beachhead market</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Make a P1-type learner the persona and the team's shared reference point. For example: "林子涵, 22, pharmacy senior, 110 days to 考研. Pays ¥68/mo for shared ChatGPT and loses 40 min a day maintaining Notion. Quits any tool that gets drug facts wrong twice." Keep the deck's User B as a secondary persona for the accountability add-on.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>P1's buying criteria (accuracy, replacing ChatGPT, exporting to Anki and Notion) are specific and product-actionable.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Find 3 real people who match the persona closely. Interview them, then correct the persona with their verbatims.</p></div>
+<h3 id="step-6-full-life-cycle-use-case">Step 6. Full life-cycle use case</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Redesign the flow around what the persona actually does. (1) Discovery via a 小红书 post or a cohort chat. (2) First session: upload one PDF or import ChatGPT history, and get a useful "tonight" plan within 5 minutes with no setup. (3) Daily: ask for an answer, get a cited answer, and the mistake is logged automatically. (4) The next day: the "tonight" list is built from errors and decay. (5) Weekly: export to Anki or Notion. (6) Exam day: the product holds the learner's history. (7) After the exam: they switch to the next exam and the history carries over.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>6 of 10 need setup under 5–10 minutes. 6 of 10 need export or integration. 6 of 10 stop paying after the exam.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Measure time-to-first-value and first-week return in onboarding sessions with real users.</p></div>
+<h3 id="step-7-high-level-product-specification">Step 7. High-level product specification</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Re-rank the four pillars. (1) Automatic mistake and forgetting memory. (2) A daily "tonight" priority list. (3) Answers grounded in the learner's documents with page citations. (4) Answer-first mode with optional self-testing. Keep scaffolding as a toggle, not the default. Replace generic push with specific nudges that name the subject and error, and let users switch them off. Add import from ChatGPT threads, phone photos and 讲义 chapter structure, plus export to Anki and Notion.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>A3 was Invalidated (0 V / 3 P / 7 I) and A5 was Invalidated (0 V / 5 P / 5 I). The most frequent objections were generic push being muted (10/10) and withheld answers sending people back to free AI (9/10).</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>A/B test the default mode (answer-first vs scaffold-first) against day-7 return and conversion. Run a holdout test of specific vs generic nudges.</p></div>
+<h3 id="step-8-quantify-the-value-proposition">Step 8. Quantify the value proposition</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Quantify the value in hours and substitution, not in feelings. Examples: "Saves the ~1 h/day spent re-orienting and maintaining trackers (P1: 40 min of Notion plus re-explaining context)." "Replaces ChatGPT Plus for studying at a comparable price." "Turns 10 minutes of deciding what to study into a ready list."</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>In the synthetic round, time was the scarcest resource (7 of 10 used "waste" or "wasted" about time), and ¥99+ money moved only out of an existing line item.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Instrument time-to-start and re-orientation time for real users, before and after Zero. Publish the measured delta.</p></div>
+<h3 id="step-9-identify-your-next-10-customers">Step 9. Identify your next 10 customers</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>List 10 named real people who match the beachhead persona: current Zero payers, members of the deck's 小红书 cohort from 4/13, and 考研 group-chat organizers. Interview them with the v2 script and make the C3 paid-pilot offer.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Synthetic personas cannot be customers. This step is where the evidence has to come from real people.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>At least 7 of 10 confirm the persona and at least 4 prepay for a pilot.</p></div>
+<h2 id="phase-2-what-can-you-do-for-your-customer">Phase 2: What can you do for your customer?</h2>
+<h3 id="step-10-define-your-core">Step 10. Define your Core</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Redefine the Core from 陪伴 companionship to an accurate, compounding learner record: an error-and-decay memory that makes each day's recommendation better and moves with the learner from one exam to the next. That record is what competitors can't copy by adding a memory feature.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Memory was the one concept element that attracted interest from every segment. The deck's "time compounding" data-asset thesis fits this reframing.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Track whether recommendation acceptance rises with a user's history length (e.g. week 1 vs week 6).</p></div>
+<h3 id="step-11-chart-your-competitive-position">Step 11. Chart your competitive position</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Put these two axes on the chart: "remembers your mistakes and forgetting across sessions" and "grounded and cited from your own materials". The real competitor is free ChatGPT, Doubao or DeepSeek plus a hand-built Notion or Anki system, not Khanmigo. Position Zero as "the study layer that sits beside your AI and your Anki."</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>9 of 10 fall back to free AI. 6 of 10 refuse to give up Anki, Notion, Obsidian, UWorld or 粉笔.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>In real interviews, ask what they would do if Zero disappeared tomorrow. That answer identifies the true alternative.</p></div>
+<h2 id="phase-3-how-does-your-customer-acquire-your-product">Phase 3: How does your customer acquire your product?</h2>
+<h3 id="step-12-determine-the-customer-s-decision-making-unit-dmu">Step 12. Determine the customer's Decision-Making Unit (DMU)</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>For the beachhead, the learner is champion, end user and economic buyer all at once. Primary influencers are cohort peers and group-chat organizers, people who already passed (上岸 stories) and, in trust-gated segments, the teacher or tutor. Parents are an economic buyer only in the supervision segment.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>5 of 10 require an endorsement from a trusted peer or expert. P2 and P5 are parent-funded.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Ask every real interviewee: "Who did you ask before your last study purchase?"</p></div>
+<h3 id="step-13-map-the-process-to-acquire-a-paying-customer">Step 13. Map the process to acquire a paying customer</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>The funnel: 小红书 or cohort post → free trial with instant value (≤5 min) → accuracy proven on the learner's own material → specific nudge on day 2–3 → paywall at the moment the "tonight" list saves them time → an exam-cycle pass. Give group-chat organizers (P1 type) a referral mechanic.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>The deck reports 74.2% checkout conversion once people reach the paywall. The synthetic round points to trial and first-session value as the bottleneck (6 of 10 require a free trial).</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Instrument each funnel stage and find where real users drop off.</p></div>
+<h3 id="step-14-estimate-the-tam-for-follow-on-markets">Step 14. Estimate the TAM for follow-on markets</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Order the follow-on markets by how closely their need matches the beachhead. (1) Other professional 考研 tracks and CPA or multi-project grad students (P3 type). (2) Overseas high-stakes exams (MCAT, USMLE; P10 type), where the need converges. (3) 法考 and MBA through teacher or tutor partnerships (P4/P9 types). (4) Mass college finals and CET (P5 type) only through a free, viral tier.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>8 of 10 personas' needs matched P10's pattern (V or P on A8). The trust-gated segments need endorsement from a human authority.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Interview at least 5 overseas learners and at least 5 tutors, and re-score A8 with real data.</p></div>
+<h2 id="phase-4-how-do-you-make-money-off-your-product">Phase 4: How do you make money off your product?</h2>
+<h3 id="step-15-design-a-business-model">Step 15. Design a business model</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Move from open-ended monthly subscriptions to exam-cycle subscriptions, and keep monthly billing as a fallback. Add a B2B2C channel later: teachers and tutors could use Zero to track students, which would unlock the trust-gated segments.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>6 of 10 pay only in the months before their exam. The deck shows 55% already choose quarterly plans. P9 said: "If my tutor used it to track me and he checked it, maybe."</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Offer both billing options to real users and compare cycle-level revenue and uptake.</p></div>
+<h3 id="step-16-set-your-pricing-framework">Step 16. Set your pricing framework</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Keep ¥39/mo as the entry price. Reposition ¥99 Pro explicitly as a "ChatGPT Plus replacement for studying" (top model plus unlimited grounding). Add an exam-cycle pass, e.g. 4 months for about ¥149–199. Keep the free tier generous enough to prove memory value within a week. Keep ¥199 for heavy users, but don't count on it.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Median WTP was ¥30. 0 of 10 would pay ¥39 unconditionally. ¥99+ appears only as substitution (P1, P7, P10). P5 compared prices to milk tea ("¥39 is like eight cups").</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Run a Van Westendorp survey plus a real price test across the three offers with at least 200 users.</p></div>
+<h3 id="step-17-calculate-the-lifetime-value-ltv-of-an-acquired-customer">Step 17. Calculate the Lifetime Value (LTV) of an acquired customer</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Rebuild LTV per exam cycle. For example: ¥40–60 ARPU × 4 paying months ≈ ¥160–240 per cycle, times the probability of returning for another exam (to be measured). Treat the deck's ¥473 (¥78.9 × 6 months) as an upper bound until real cohort data supports it.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>The synthetic mean WTP of ¥39 is half the current ARPU. 6 of 10 said they would churn after the exam.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Build real payer cohorts aligned to exam dates and measure retention past each exam.</p></div>
+<h3 id="step-18-map-the-sales-process-to-acquire-a-customer">Step 18. Map the sales process to acquire a customer</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Short term: founder-led content on 小红书 and B站 showing real "tonight lists" and accuracy on real textbooks. Medium term: a referral program for group-chat organizers and campus ambassadors in the beachhead majors. Long term: partnerships with tutors and 机构 (training institutions) for the trust-gated segments.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>One 小红书 note brought in about 1,000 sign-ups (deck). Referral tendency is high for P1-type users and low for trust-gated ones.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Measure cost and conversion per channel for three content formats.</p></div>
+<h3 id="step-19-calculate-the-cost-of-customer-acquisition-coca">Step 19. Calculate the Cost of Customer Acquisition (COCA)</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>The current COCA of ¥0 is organic and won't last at scale. Budget COCA against per-cycle LTV: target COCA ≤ ¥60 so that LTV/COCA ≥ 3 at the conservative ¥180 LTV. Track paid, organic and referral COCA separately.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>A lower per-cycle LTV squeezes the acceptable COCA well below what the deck's ¥473 LTV implies.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Run a small paid test (e.g. ¥5k on 小红书 薯条 post promotion) and measure real COCA for beachhead sign-ups.</p></div>
+<h2 id="phase-5-how-do-you-design-and-build-your-business">Phase 5: How do you design and build your business?</h2>
+<h3 id="step-20-identify-key-assumptions">Step 20. Identify key assumptions</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Replace the v1 assumption list with the revised set, ranked riskiest first. R1: an automatic error-and-decay memory plus a "tonight" list drives multi-day return better than push. R2: answer-first with optional testing beats scaffold-first on retention and conversion. R3: users pay ¥39+/mo or ¥149+ per cycle when Zero replaces ChatGPT Plus for studying. R4: a single factual error causes churn, and citations reduce it. R5: specific nudges don't get muted. R6: users will upload materials once format friction (photos, 讲义 structure) is removed. R7: overseas learners share the need.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>A3, A5 and A7 were Invalidated. A1, A2, A4, A6 and A8 were Partially Validated (see the Step 4–5 dashboard).</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Use the Step 6 v2 script for R1–R7, then run the experiments below.</p></div>
+<h3 id="step-21-test-key-assumptions">Step 21. Test key assumptions</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Run five experiments in priority order. (1) A/B test of answer-first vs scaffold-first default mode. (2) Holdout test of specific nudges vs generic push vs none. (3) Paid pilot with three price offers (Step 16). (4) An accuracy audit on 3 subjects (pharmacology, 刑法, 408), measuring error rate and churn after an error. (5) Churned-user interviews covering why they left and what brought them back to studying.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>Each experiment targets an assumption the synthetic round contradicted or could not resolve.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Pre-register a success threshold for each experiment, e.g. answer-first improves day-7 return by at least 5 percentage points.</p></div>
+<h3 id="step-22-define-the-minimum-viable-business-product-mvbp">Step 22. Define the Minimum Viable Business Product (MVBP)</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>The MVBP is something a customer pays for, uses and gets value from, so it needs only three things. (1) Upload a PDF or import ChatGPT history, and get cited answers. (2) An automatic mistake log plus a daily "tonight" list. (3) Export to Anki. Sell it as an exam-cycle pass. Park AI-generated notes, multi-project management and 督学 personas until the MVBP converts.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>This is the smallest bundle that addresses the biggest unmet need, which 6 of 10 named directly and 3 more named adjacently.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>At least 30% of beachhead trial users pay for the pass within 14 days.</p></div>
+<h3 id="step-23-show-that-the-dogs-will-eat-the-dog-food">Step 23. Show that "the dogs will eat the dog food"</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Prove it with behavior, not stated interest. Check whether real payers act on the "tonight" list on 4 or more days a week, whether exports to Anki are used, and whether users renew for their next exam. Report these metrics in the next deck instead of total registrations.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>The deck's 96% "external memory" figure comes only from retained users. The synthetic round suggests exam deadlines, not memory, drive return.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Cohort metrics on "tonight" list acceptance, D7/D30 return aligned to exam dates, and renewal across exams.</p></div>
+<h3 id="step-24-develop-a-product-plan">Step 24. Develop a product plan</h3>
+<div class="callout rec"><span class="lbl">Recommendation</span><p>Next 90 days: ship the MVBP and experiments 1–4 in the 考研 beachhead. Days 90–180: add a CPA and grad-student multi-project mode and run an English-web MCAT pilot with UWorld and Anki integration. Days 180–365: build tutor and 机构 partnerships for 法考 and MBA, and a free, viral finals mode for mass college students. Revisit the 出海 track only after at least 5 real overseas interviews confirm A8.</p></div>
+<div class="callout why"><span class="lbl">Evidence</span><p>The sequence follows the fit and WTP ranking in the synthetic segment table and protects the beachhead focus that Disciplined Entrepreneurship requires.</p></div>
+<div class="callout test"><span class="lbl">Validation test</span><p>Hold a stage-gate review at each phase against the Step 21 thresholds before expanding.</p></div>
+<h2 id="what-not-to-change-yet">What not to change yet</h2>
+<ul>
+<li><strong>Don't drop scaffolding entirely.</strong> Make it optional. Real Zero users praise "它让我自己想明白", so run the A/B test before deciding.
+</li>
+<li><strong>Don't abandon the supervision segment.</strong> Keep specific accountability as a paid add-on for parent-funded users and test whether parents would pay for it.
+</li>
+<li><strong>Don't cut prices before testing substitution framing.</strong> The synthetic round suggests how Pro is framed matters more than its price.
+</li></ul>
+<footer>Synthetic AI research — an exploratory simulation for refining hypotheses and scripts. All findings must be validated through primary interviews with real human end users. Generated for Zero (观界未来) · Disciplined Entrepreneurship framework.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  document.addEventListener('mousemove',function(e){
+    var t=e.target.closest('[data-tip]');
+    if(!t){tip.style.opacity=0;return;}
+    tip.textContent=t.getAttribute('data-tip');
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+290>innerWidth)x=e.clientX-290;
+    tip.style.left=x+'px';tip.style.top=y+'px';tip.style.opacity=1;
+  });
+  var b=document.querySelector('.theme-toggle'),r=document.documentElement;
+  function cur(){return r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+  try{var s=localStorage.getItem('zero-theme');if(s)r.setAttribute('data-theme',s);}catch(e){}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('zero-theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

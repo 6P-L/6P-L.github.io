@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero Interview Script</title>
+<meta name="description" content="Annotated interview script for real-user validation of Zero&#x27;s key assumptions.">
+<style>
+:root{
+  --page:#f3eee4; --surface:#fbf8f2; --surface-2:#f1ebdf; --ink:#1c1a17; --ink-2:#55504a; --muted:#8a847b;
+  --line:#e2dbcc; --accent:#b8482a; --accent-soft:#f3dfd5; --code:#efe8da;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --warn-ink:#8a5a00; --crit:#d03b3b; --crit-ink:#a42626;
+  --bar:#2a78d6; --bar-2:#86b6ef; --ring:rgba(28,26,23,.10);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+    --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+    --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#0f0e0d; --surface:#1a1918; --surface-2:#232120; --ink:#f4f1ea; --ink-2:#c3c0b7; --muted:#8f8a80;
+  --line:#34312d; --accent:#e0714f; --accent-soft:#3a2219; --code:#262320;
+  --good-ink:#34c534; --warn-ink:#fab219; --crit-ink:#ef7a7a; --bar:#3987e5; --bar-2:#184f95; --ring:rgba(255,255,255,.10);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--page);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 16px 96px}
+header.hero{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:28px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.brand{font:600 15px/1 Georgia,"Songti SC",serif;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.brand i{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block}
+h1{font:600 clamp(28px,4.4vw,44px)/1.15 Georgia,"Songti SC",serif;margin:.35em 0 .3em;letter-spacing:-.01em}
+h2{font:600 clamp(22px,3vw,28px)/1.25 Georgia,"Songti SC",serif;margin:2.2em 0 .6em;padding-top:.6em;border-top:1px solid var(--line)}
+h3{font-size:18px;line-height:1.35;margin:1.8em 0 .5em}
+h4{font-size:16px;margin:1.4em 0 .4em;color:var(--ink-2)}
+p,li{color:var(--ink)}
+.lede{color:var(--ink-2);font-size:17px;max-width:760px}
+a{color:var(--accent)}
+strong{font-weight:650}
+code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+ul,ol{padding-left:1.3em}
+li{margin:.25em 0}
+nav.toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:24px 0;font-size:14px}
+nav.toc b{display:block;font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+nav.toc a{color:var(--ink-2);text-decoration:none;display:inline-block;margin:2px 14px 2px 0}
+nav.toc a:hover{color:var(--accent)}
+.tbl{overflow-x:auto;margin:14px 0 18px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{font-weight:600;color:var(--ink-2);background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.warnbox{background:var(--accent-soft);border:1px solid var(--accent);border-left-width:5px;border-radius:10px;padding:14px 18px;margin:18px 0}
+.warnbox h2,.warnbox h3{margin-top:0;border:0;padding:0}
+.callout{border-radius:10px;padding:12px 16px;margin:10px 0;border:1px solid var(--line);background:var(--surface)}
+.callout .lbl{display:block;font:600 11px/1.4 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.callout p{margin:.25em 0}
+.callout.syn{border-left:4px solid var(--bar)} .callout.syn .lbl{color:var(--bar)}
+.callout.val{border-left:4px solid var(--accent)} .callout.val .lbl{color:var(--accent)}
+.callout.probe{border-left:4px solid var(--muted)} .callout.probe .lbl{color:var(--muted)}
+.callout.rec{border-left:4px solid var(--good)} .callout.rec .lbl{color:var(--good-ink)}
+.callout.why{border-left:4px solid var(--warn)} .callout.why .lbl{color:var(--warn-ink)}
+.callout.test{border-left:4px solid var(--accent)} .callout.test .lbl{color:var(--accent)}
+.badge{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 system-ui,sans-serif;padding:4px 8px;border-radius:999px;white-space:nowrap;max-width:100%;border:1px solid transparent}
+.badge.v{color:var(--good-ink);background:color-mix(in srgb,var(--good) 14%,transparent);border-color:color-mix(in srgb,var(--good) 40%,transparent)}
+.badge.p{color:var(--warn-ink);background:color-mix(in srgb,var(--warn) 18%,transparent);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.badge.i{color:var(--crit-ink);background:color-mix(in srgb,var(--crit) 13%,transparent);border-color:color-mix(in srgb,var(--crit) 40%,transparent)}
+.badge.n{color:var(--ink-2);background:var(--surface-2);border-color:var(--line)}
+.matrix td,.matrix th{text-align:center}
+.matrix td:first-child,.matrix th:first-child{text-align:left}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.kpi .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.kpi .kv{font:600 30px/1.1 Georgia,serif;margin:6px 0 2px}
+.kpi .s{font-size:13px;color:var(--ink-2)}
+.kpi .s .badge{white-space:normal}
+.kpi{min-width:0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 18px 12px;margin:16px 0 22px}
+.chart h4{margin:0 0 4px;color:var(--ink)}
+.chart .sub{font-size:13px;color:var(--muted);margin:0 0 14px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--ink-2);margin:0 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.row{display:grid;grid-template-columns:minmax(120px,260px) 1fr 104px;gap:12px;align-items:center;margin:8px 0;font-size:14px}
+.row .lab{color:var(--ink);line-height:1.3}
+.row .lab small{display:block;color:var(--muted);font-size:12px}
+.row .val{font-variant-numeric:tabular-nums;color:var(--ink-2);text-align:right;white-space:nowrap}
+.track{height:18px;background:var(--surface-2);border-radius:4px;display:flex;gap:2px;overflow:hidden}
+.seg{height:100%;border-radius:4px;min-width:0;cursor:default;transition:filter .12s}
+.seg:hover{filter:brightness(1.1)}
+.seg.v{background:var(--good)} .seg.p{background:var(--warn)} .seg.i{background:var(--crit)}
+.seg.b{background:var(--bar)} .seg.b2{background:var(--bar-2)}
+.vbars{display:flex;align-items:flex-end;gap:10px;height:190px;padding:0 4px;border-bottom:1px solid var(--line)}
+.vcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px}
+.vcol .bar{width:100%;max-width:64px;background:var(--bar);border-radius:4px 4px 0 0}
+.vcol .n{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.vlabels{display:flex;gap:10px;padding:6px 4px 0}
+.vlabels div{flex:1;text-align:center;font-size:12px;color:var(--muted);line-height:1.3}
+.refline{position:relative}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.twocol{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:4px}.row .val{text-align:left}}
+details.raw{margin:12px 0;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.raw summary{cursor:pointer;padding:10px 14px;font-weight:600}
+details.raw pre{margin:0;padding:14px;overflow:auto;max-height:420px;font:12px/1.5 ui-monospace,monospace;background:var(--code);border-radius:0 0 10px 10px}
+.need{font:500 clamp(19px,2.4vw,24px)/1.4 Georgia,"Songti SC",serif;border-left:4px solid var(--accent);padding:6px 0 6px 16px;margin:14px 0}
+#tip{position:fixed;pointer-events:none;z-index:10;background:var(--ink);color:var(--page);font-size:12px;line-height:1.4;padding:6px 9px;border-radius:6px;max-width:280px;opacity:0;transition:opacity .08s}
+footer{margin-top:64px;padding-top:18px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.theme-toggle{position:absolute;top:12px;right:16px;background:var(--surface);color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;cursor:pointer;z-index:5}
+@media print{.theme-toggle,nav.toc{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" type="button" aria-label="Toggle light or dark theme">◐ Theme</button>
+<div class="wrap">
+<header class="hero">
+<div class="brand"><i></i>Zero · Synthetic Research</div>
+<div class="eyebrow">Step 6 · Real-user interview guide</div>
+<h1>Zero Real-User Interview Script v2 (Annotated)</h1><p class="lede">A field guide for 45-minute interviews with real learners. Every question is annotated with what the synthetic round suggests and what only real humans can confirm. Revised from v1 using the Step 4 synthesis.</p>
+</header>
+<nav class="toc"><b>Contents</b><a href="#how-to-use-this-guide">How to use this guide</a><a href="#section-1-warm-up-and-context-5-min">Section 1: Warm-up and context (5 min)</a><a href="#section-2-memory-return-and-forgetting-riskiest-a1">Section 2: Memory, return and forgetting (riskiest: A1)</a><a href="#section-3-answers-vs-guidance-accuracy-and-trust-a3">Section 3: Answers vs guidance, accuracy and trust (A3)</a><a href="#section-4-tools-uploads-accountability-and-spend-a4-a6-a5-a7-a2">Section 4: Tools, uploads, accountability and spend (A4, A6, A5, A7, A2)</a><a href="#section-5-closing-value-anchoring-and-commitment-a2">Section 5: Closing, value anchoring and commitment (A2)</a><a href="#after-each-interview-5-min">After each interview (5 min)</a></nav>
+<div class="warnbox"><strong>Important.</strong> The "Synthetic research suggests" notes come from 10 AI-generated personas. They are hypotheses to listen for, not facts. Do not lead the interviewee toward them. Your job is to find out whether real people behave the same way.</div>
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<ul>
+<li><strong>Target:</strong> 20–30 real interviews before changing the plan; aim for at least 5 per segment below.
+</li>
+<li><strong>Recruit across four cells:</strong> (1) AI-heavy exam candidates who already pay for ChatGPT, Kimi or another AI and have PDFs (the synthetic beachhead: P1/P10 types); (2) multi-project grad students (P3 type); (3) low-budget learners who need accountability (P2 type); (4) trust-gated, high-budget exam candidates with a paid course or tutor (P4/P9 types). Include at least 5 churned Zero users and at least 5 overseas English-speaking learners.
+</li>
+<li><strong>Timing:</strong> Interview people 1–6 months before their exam, not in the final 3 weeks (the synthetic P4 would refuse to change anything then).
+</li>
+<li><strong>Rules:</strong> Ask about specific past episodes ("the last time…"). Never pitch or describe Zero before Section 5. Don't agree, praise or explain. When they generalize ("I usually…"), ask "Tell me about the last time that happened." Record the exact words people use.
+</li>
+<li><strong>Ask to see artifacts:</strong> their Notion, Anki deck, 错题本, planner or chat history, via screen share or photos. What people show you is stronger evidence than what they say.
+</li>
+<li><strong>Consent:</strong> Explain that notes are for research only and that nothing identifying will be shared. Ask before recording.
+</li></ul>
+<h2 id="section-1-warm-up-and-context-5-min">Section 1: Warm-up and context (5 min)</h2>
+<h3 id="w1-tell-me-what-you-re-studying-for-right-now-and-what-s-riding-on-it">W1. Tell me what you're studying for right now, and what's riding on it.</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Stakes and time to the exam shaped everything else. Personas more than 3 months out were open to trying tools; those in the final weeks refused to switch.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Record the exam date and whether they're self-funded or parent-funded. Check whether openness really drops close to the exam, and whether parent-funded learners are real buyers or only users.</p></div>
+<h3 id="w2-walk-me-through-the-last-day-you-studied-from-when-you-sat-down-to-when-you-stopped">W2. Walk me through the last day you studied, from when you sat down to when you stopped.</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Nearly every persona lost time to re-orienting ("where was I") and to hand-copying between tools.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Time these moments in their own account (minutes spent re-orienting, copying, choosing what to do). Only count what they describe from a specific day, not their estimates of a typical day.</p></div>
+<h3 id="w3-can-you-show-me-the-tools-notes-or-materials-you-used-that-day">W3. Can you show me the tools, notes or materials you used that day?</h3>
+<div class="callout probe"><span class="lbl">Probe</span><p>Ask to screen-share their Notion, Anki, planner or AI chat list. Count the tools and threads. Note what state the system is in: maintained, stale or abandoned.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>The synthetic round claims manual systems go stale (e.g. "three days out of date"). Only a look at real artifacts can confirm this.</p></div>
+<h2 id="section-2-memory-return-and-forgetting-riskiest-a1">Section 2: Memory, return and forgetting (riskiest: A1)</h2>
+<h3 id="q1-think-about-the-last-time-you-stepped-away-from-a-subject-for-a-few-days-what-happened-when-you-came-back-how-did-you-figure-out-where-you-were">Q1. Think about the last time you stepped away from a subject for a few days. What happened when you came back? How did you figure out where you were?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Memory reduced the cost of coming back but was never why anyone came back. Deadlines, guilt, peers and sunk costs (paid classes, a study-room fee) brought people back (A1: 0 V / 7 P / 3 I).</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>What actually triggered the return? Separate the trigger (why they came back) from the re-entry cost (how painful it was). Zero's return data should be matched against exam calendars to confirm this.</p></div>
+<h3 id="q2-what-if-anything-keeps-track-of-what-you-ve-learned-what-you-got-wrong-and-what-s-next-when-did-you-last-update-it">Q2. What, if anything, keeps track of what you've learned, what you got wrong and what's next? When did you last update it?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Every persona who tracked mistakes by hand abandoned it or let it go stale. The top unmet need is a record of mistakes and forgetting that needs no maintenance.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Ask for the date of the last update and show the artifact. Does the need for automatic error memory hold up in real behavior, or do real users keep their own systems going?</p></div>
+<h3 id="q3-tell-me-about-something-you-studied-a-while-ago-that-you-ve-since-started-forgetting-how-did-you-notice-and-what-did-you-do">Q3. Tell me about something you studied a while ago that you've since started forgetting. How did you notice, and what did you do?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Forgetting early subjects (e.g. 民法 decay during 法考) was a strong, specific pain for high-stakes candidates.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>How do they currently detect forgetting? Do they act on it? Would they trust a system to flag it?</p></div>
+<h2 id="section-3-answers-vs-guidance-accuracy-and-trust-a3">Section 3: Answers vs guidance, accuracy and trust (A3)</h2>
+<h3 id="q4-describe-the-last-time-you-got-stuck-on-a-concept-or-problem-what-did-you-do-step-by-step">Q4. Describe the last time you got stuck on a concept or problem. What did you do, step by step?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>9 of 10 would go back to free ChatGPT, Doubao or DeepSeek if an answer were withheld. The preferred pattern was "answer first, then let me test myself."</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Watch for fatigue and time of day. Do real users bypass guided modes when tired? This is the single most important contradiction with the deck's quote "它让我自己想明白".</p></div>
+<h3 id="q5-when-you-use-ai-for-studying-what-do-you-actually-ask-it-for-can-you-show-me-your-last-few-conversations">Q5. When you use AI for studying, what do you actually ask it for? Can you show me your last few conversations?</h3>
+<div class="callout probe"><span class="lbl">Probe</span><p>Classify the prompts they show you: answer requests, explanations, quizzes or plans. Their chat history is the evidence here, not what they say about it.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>What share of real prompts ask for answers versus guidance? Do real Zero users turn on step-by-step mode voluntarily?</p></div>
+<h3 id="q6-tell-me-about-a-time-an-ai-tool-gave-you-something-wrong-what-happened-next">Q6. Tell me about a time an AI tool gave you something wrong. What happened next?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>7 of 10 had a one-strike rule ("wrong twice and I'm gone"). Accuracy gated trust before price did, especially in pharmacology, law, medicine and logic.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>What error rate do real users tolerate? Does a source-page citation change that threshold? Ask what they did after the error: stopped entirely, verified more, or switched tools.</p></div>
+<h2 id="section-4-tools-uploads-accountability-and-spend-a4-a6-a5-a7-a2">Section 4: Tools, uploads, accountability and spend (A4, A6, A5, A7, A2)</h2>
+<h3 id="q7-walk-me-through-how-you-move-between-your-tools-in-a-session-what-if-anything-bothers-you-about-that">Q7. Walk me through how you move between your tools in a session. What, if anything, bothers you about that?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>People are used to switching. The pain is that their records don't connect and they copy by hand; all 10 personas described copy-paste. Six wanted Zero to export to Anki, Notion, Obsidian, UWorld or 粉笔 rather than replace them (A4 Partially Validated).</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Is the complaint about switching, copying or disconnected records? Which one tool would they refuse to give up?</p></div>
+<h3 id="q8-what-materials-do-you-study-from-and-in-what-form-tell-me-about-the-last-time-you-put-course-material-into-an-online-or-ai-tool-or-decided-not-to">Q8. What materials do you study from, and in what form? Tell me about the last time you put course material into an online or AI tool, or decided not to.</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Upload barriers split between format and effort (phone photos, DRM, scanning) and rules (watermarked 讲义, 内部资料 slides, an unpublished thesis). Privacy was only part of it (A6 Partially Validated).</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Ask what form their materials are in: PDF, phone photos, a paper book, or an app-only question bank. Which rules or norms matter to them? Would endorsement from a school or teacher unlock uploads?</p></div>
+<h3 id="q9-has-anyone-or-anything-ever-checked-in-on-your-studying-tell-me-about-the-last-one-what-did-you-do-with-those-messages">Q9. Has anyone or anything ever checked in on your studying? Tell me about the last one. What did you do with those messages?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>All 10 had muted or abandoned a reminder, 督学 or 打卡 system. The only outreach anyone asked for was specific and data-aware, e.g. "4 days since OS; you were stuck on PV operations."</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Would a specific nudge have worked for them, or is every reminder muted? Don't ask hypothetically. Ask for the most recent message they didn't mute, and why.</p></div>
+<h3 id="q10-of-everything-about-preparing-for-this-exam-what-s-the-hardest-part-why-that-part">Q10. Of everything about preparing for this exam, what's the hardest part? Why that part?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Starting and persisting (没法开始 / 走不远) was the main pain for only 2 of 10, the two lowest-budget personas. Most said the pain was prioritization: "what should I work on tonight?" (A7 Invalidated).</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Record their exact words. Is the pain motivation or diagnosis? Does the answer differ by segment and budget?</p></div>
+<h3 id="q11-what-have-you-spent-money-on-for-this-exam-so-far-courses-apps-tutors-subscriptions-how-do-you-feel-about-each-purchase-now-which-did-you-cancel-and-when">Q11. What have you spent money on for this exam so far: courses, apps, tutors, subscriptions? How do you feel about each purchase now? Which did you cancel, and when?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>Spend clusters on outcome-tied courses and human services. AI subscriptions are paid on and off. ¥99-tier money only moves out of an existing line item (ChatGPT Plus, 申论 批改).</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Build a real spending ledger with amounts, dates and cancellations. The ledger is stronger evidence than any stated willingness to pay.</p></div>
+<h2 id="section-5-closing-value-anchoring-and-commitment-a2">Section 5: Closing, value anchoring and commitment (A2)</h2>
+<h3 id="c1-of-everything-you-ve-paid-for-which-was-most-worth-it-and-which-least-why">C1. Of everything you've paid for, which was most worth it and which least? Why?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>"Worth it" meant saving hours or protecting an exam outcome. Personas regretted recorded courses they never watched and generic 督学 services.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>What criteria do real learners use? Use their answers to shape the value proposition's wording.</p></div>
+<h3 id="c2-if-one-problem-you-ve-described-today-could-be-taken-completely-off-your-plate-which-would-you-pick-what-would-that-be-worth-per-month-and-what-would-you-stop-paying-for-or-stop-doing-to-make-room">C2. If one problem you've described today could be taken completely off your plate, which would you pick? What would that be worth per month, and what would you stop paying for or stop doing to make room?</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>The median was ¥30/month and no persona would pay ¥39 unconditionally. Six of ten would pay only in the months before their exam, and most would pay by cancelling something else rather than with new budget.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>Stated willingness to pay overstates real payment. Always follow with C3.</p></div>
+<h3 id="c3-new-commitment-test-we-re-running-a-paid-pilot-for-the-next-exam-cycle-would-you-like-to-reserve-a-spot-offer-39-per-exam-cycle-month-or-99-with-a-named-substitution-e-g-replaces-chatgpt-plus-for-studying">C3 (new). Commitment test. "We're running a paid pilot for the next exam cycle. Would you like to reserve a spot?" Offer ¥39 per exam cycle month, or ¥99 with a named substitution (e.g. "replaces ChatGPT Plus for studying").</h3>
+<div class="callout probe"><span class="lbl">Probe</span><p>Record the outcome: prepaid, joined the waitlist, gave an email, or declined. In Aulet's terms, this separates real customers from polite interviewees.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>This is the only way to test A2. Synthetic personas cannot pay.</p></div>
+<h3 id="z1-optional-last-concept-reaction-read-an-ai-study-system-that-works-from-your-own-materials-remembers-what-you-got-wrong-and-what-you-re-forgetting-and-tells-you-what-to-work-on-each-day-direct-answers-by-default-with-optional-self-testing-ask-what-s-your-honest-reaction-what-would-make-this-useless-to-you">Z1 (optional, last). Concept reaction. Read: "An AI study system that works from your own materials, remembers what you got wrong and what you're forgetting, and tells you what to work on each day. Direct answers by default, with optional self-testing." Ask: "What's your honest reaction? What would make this useless to you?"</h3>
+<div class="callout syn"><span class="lbl">Synthetic research suggests</span><p>"Remembers my mistakes" and "tells me what to do tonight" drew the strongest interest. "Guides step by step instead of answering" and "reaches out to keep you on track" were rejected by most personas.</p></div>
+<div class="callout val"><span class="lbl">Validate with real humans</span><p>This v2 wording tests the revised value proposition. If time allows, run an A/B check by reading the v1 wording to half the interviewees.</p></div>
+<h2 id="after-each-interview-5-min">After each interview (5 min)</h2>
+<ul>
+<li>Score each assumption A1–A8 as V, P or I for this interviewee, using what they did in the past, not what they said about the concept.
+</li>
+<li>Log the spending ledger, the commitment outcome (C3) and the artifacts you saw.
+</li>
+<li>Write down 3 verbatim phrases. Compare them with the synthetic phrase list and note the words real users use instead.
+</li>
+<li>Flag any surprise that contradicts both the deck and the synthetic dashboard. Those are the most valuable findings.
+</li></ul>
+<footer>Synthetic AI research — an exploratory simulation for refining hypotheses and scripts. All findings must be validated through primary interviews with real human end users. Generated for Zero (观界未来) · Disciplined Entrepreneurship framework.</footer>
+</div>
+<div id="tip" role="tooltip"></div>
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  document.addEventListener('mousemove',function(e){
+    var t=e.target.closest('[data-tip]');
+    if(!t){tip.style.opacity=0;return;}
+    tip.textContent=t.getAttribute('data-tip');
+    var x=e.clientX+14,y=e.clientY+14;
+    if(x+290>innerWidth)x=e.clientX-290;
+    tip.style.left=x+'px';tip.style.top=y+'px';tip.style.opacity=1;
+  });
+  var b=document.querySelector('.theme-toggle'),r=document.documentElement;
+  function cur(){return r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+  try{var s=localStorage.getItem('zero-theme');if(s)r.setAttribute('data-theme',s);}catch(e){}
+  b.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('zero-theme',n);}catch(e){}});
+})();
+</script>
+</body>
+</html>

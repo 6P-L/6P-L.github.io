@@ -248,21 +248,27 @@ def md_to_html(md, hooks=None):
             while i < len(lines) and lines[i].startswith(">"):
                 buf.append(lines[i][1:].strip())
                 i += 1
-            text = " ".join(b for b in buf if b)
-            mm = re.match(r"^\*\*([^*]+?):?\*\*:?\s*(.*)$", text)
-            kind = "probe"
-            if mm:
+            groups = []
+            for b in buf:
+                if b.startswith("**") or not groups:
+                    groups.append(b)
+                elif b:
+                    groups[-1] += " " + b
+            for text in groups:
+                mm = re.match(r"^\*\*([^*]+?):?\*\*:?\s*(.*)$", text)
+                if not mm:
+                    out.append(f'<div class="callout probe"><p>{inline(text)}</p></div>')
+                    continue
                 label, body = mm.group(1).strip().rstrip(":"), mm.group(2)
+                if label.lower().startswith(("important", "synthetic data warning", "disclaimer")):
+                    out.append(f'<div class="warnbox"><strong>{inline(label)}.</strong> {inline(body)}</div>')
+                    continue
+                kind = "probe"
                 for key, k in CALLOUTS:
                     if label.lower().startswith(key):
                         kind = k
                         break
-                if label.lower().startswith(("important", "synthetic data warning", "disclaimer")):
-                    out.append(f'<div class="warnbox"><strong>{inline(label)}.</strong> {inline(body)}</div>')
-                    continue
                 out.append(f'<div class="callout {kind}"><span class="lbl">{inline(label)}</span><p>{inline(body)}</p></div>')
-            else:
-                out.append(f'<div class="callout probe"><p>{inline(text)}</p></div>')
             continue
         m = re.match(r"^(\s*)([-*]|\d+\.) (.*)$", ln)
         if m:
